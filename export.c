@@ -234,48 +234,48 @@ void ft_export(char **str)
 // 	// 	tmp = tmp->next;
 // 	// }
 // }
-int main(int ac, char **av)
-{
-	// int i = 0;
-	if(ac < 1)
-		return (0);
-	// echo(av);
-	// pwd(ac, av);
-	// cd(av[2]);
-	// if(strcmp(av[1], "export") == 0)
-	// {
+// int main(int ac, char **av)
+// {
+// 	// int i = 0;
+// 	if(ac < 1)
+// 		return (0);
+// 	// echo(av);
+// 	// pwd(ac, av);
+// 	// cd(av[2]);
+// 	// if(strcmp(av[1], "export") == 0)
+// 	// {
 		
-	t_env *helper;
-	t_env *node1;
-	node1 = malloc(sizeof(t_env));
-	node1->key = strdup("var");
-	node1->value = strdup("1111");
-	node1->next = NULL;
+// 	t_env *helper;
+// 	t_env *node1;
+// 	node1 = malloc(sizeof(t_env));
+// 	node1->key = strdup("var");
+// 	node1->value = strdup("1111");
+// 	node1->next = NULL;
 	
-	helper = node1;
+// 	helper = node1;
 
-	t_env *node2 ;
-	node2 = malloc(sizeof(t_env));
-	node2->key = strdup("22222");
-	node2->value = strdup("222222");
-	node2->next = NULL;
-	node1->next = node2;
+// 	t_env *node2 ;
+// 	node2 = malloc(sizeof(t_env));
+// 	node2->key = strdup("22222");
+// 	node2->value = strdup("222222");
+// 	node2->next = NULL;
+// 	node1->next = node2;
 
-	t_env *node3;
-	node3 = malloc(sizeof(t_env));
-	node3->key = strdup("3333333");
-	node3->value = strdup("333333");
-	node3->next = NULL;
-	node2->next = node3;
+// 	t_env *node3;
+// 	node3 = malloc(sizeof(t_env));
+// 	node3->key = strdup("3333333");
+// 	node3->value = strdup("333333");
+// 	node3->next = NULL;
+// 	node2->next = node3;
 
-	t_env *tmp;
-	tmp = helper;
-	ft_export(av);
-	while(tmp)
-	{
-		printf("%s\n", tmp->key);
-		tmp = tmp->next;
-	}
-	// }
+// 	t_env *tmp;
+// 	tmp = helper;
+// 	ft_export(av);
+// 	while(tmp)
+// 	{
+// 		printf("%s\n", tmp->key);
+// 		tmp = tmp->next;
+// 	}
+// 	// }
 
-}
+// }
