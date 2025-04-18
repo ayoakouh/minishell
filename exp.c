@@ -77,157 +77,244 @@ int check_syntax_expo(char *str)
     }
     return(0);
 }
-void add_or_update(t_env **env, char *key, char *value) //add_environment;
+
+// void add_or_update(t_env **env, char *key, char *value) //add_environment;
+// {
+// 	t_env	*tmp;
+// 	t_env	*new = NULL;
+// 	int flag = 0;
+
+// 	tmp = *env;
+// 	while(tmp != NULL)
+// 	{
+// 		if(strcmp(tmp->key, key) == 0)
+// 		{
+
+// 			free(tmp->value);
+// 			if(value != NULL)
+// 				tmp->value = strdup(value);
+// 			else
+// 				tmp->value = strdup(" ");
+// 			flag = 1;
+// 			break ;
+// 		}
+// 		tmp = tmp->next;
+// 	}
+// 	if(!flag)
+// 	{
+// 		new = malloc(sizeof(t_env));
+// 		if(!new)
+// 			return ;
+// 		new->key = strdup(key);
+// 		if(value != NULL)
+// 			new->value = strdup(value);
+// 		else
+// 			new->value = strdup("");
+// 		new->next = NULL;
+
+// 	ft_lstadd_back(env, new);
+// 	}
+// }
+void add_or_update(t_env **env, char *key, char *value) //add_environment
 {
-	t_env	*tmp;
-	t_env	*new = NULL;
-	int flag = 0;
+    t_env *tmp;
+    t_env *new = NULL;
+    int flag = 0;
 
-	tmp = *env;
-	while(tmp != NULL)
-	{
-		if(strcmp(tmp->key, key) == 0)
-		{
-
-			free(tmp->value);
-			if(value != NULL)
-				tmp->value = strdup(value);
-			else
-				tmp->value = strdup(" ");
-			flag = 1;
-			break ;
-		}
-		tmp = tmp->next;
-	}
-	if(!flag)
-	{
-		new = malloc(sizeof(t_env));
-		if(!new)
-			return ;
-		new->key = strdup(key);
-		if(value != NULL)
-			new->value = strdup(value);
-		else
-			new->value = strdup("");
-		new->next = NULL;
-
-	ft_lstadd_back(env, new);
-	}
+    tmp = *env;
+    while(tmp != NULL)
+    {
+        if(strcmp(tmp->key, key) == 0)
+        {
+            free(tmp->value);
+            if(value != NULL)
+                tmp->value = strdup(value);
+            else
+                tmp->value = strdup(""); // Use empty string for consistency
+            
+            if(!tmp->value) // Check if strdup failed
+                return; // Handle error appropriately
+                
+            flag = 1;
+            break;
+        }
+        tmp = tmp->next;
+    }
+    if(!flag)
+    {
+        new = malloc(sizeof(t_env));
+        if(!new)
+            return;
+            
+        new->key = strdup(key);
+        if(!new->key) {
+            free(new);
+            return;
+        }
+        
+        if(value != NULL)
+            new->value = strdup(value);
+        else
+            new->value = strdup("");
+            
+        if(!new->value) {
+            free(new->key);
+            free(new);
+            return;
+        }
+        
+        new->next = NULL;
+        ft_lstadd_back(env, new);
+    }
 }
-
 void ft_ex(char **str, t_env **lst)
 {
-    t_env   *helper;
-    char    **spliting_input;
-    int     i = 0;
+    char **spliting_input;
+    int  i = 0;
+    char *key = NULL;
+    char *value = NULL;
 
-    helper = *lst;
-        printf("hehhdhdhdh\n");
     if(!str[1])
-        return ;
+        return;
+
     i = check_syntax_expo(str[1]);
-	if (i != 0)
-	{
-		helper->defined = 1;
-		helper->key = ft_substr(str[1], 0, i);
-		helper->value = ft_substr(str[1], i + 2, strlen(str[1]) - (i + 2));
-	}
+    if (i != 0)
+    {
+        // Handle "+=" syntax
+        key = ft_substr(str[1], 0, i);
+        value = ft_substr(str[1], i + 2, strlen(str[1]) - (i + 2));
+        
+        if (!key || !value) {
+            free(key);
+            free(value);
+            return;
+        }
+    }
     else
     {
         spliting_input = ft_split(str[1], '=');
-		printf("%s\n", spliting_input[0]);
-		// if(!spliting_input[0] || spliting_input[1] || !spliting_input)
-		// {
-		// 	free(spliting_input[0]);
-		// 	free(spliting_input[1]);
-		// 	free(spliting_input);
-		// }
-		// printf("%s\n", spliting_input[1]);
-        helper->key = spliting_input[0];
-        helper->value = spliting_input[1];
+        if (!spliting_input)
+            return;
+
+        if (!spliting_input[0]) {
+            free(spliting_input);
+            return;
+        }
+        
+        // Make copies of the strings so we can free spliting_input safely
+        key = strdup(spliting_input[0]);
+        value = spliting_input[1] ? strdup(spliting_input[1]) : strdup("");
+        
+        // Free the split result
+        int j = 0;
+        while (spliting_input[j]) {
+            free(spliting_input[j]);
+            j++;
+        }
+        free(spliting_input);
+        
+        if (!key || !value) {
+            free(key);
+            free(value);
+            return;
+        }
     }
-	// if (!is_valide_key(helper->key))
-	// {
-	// 	free(helper->key);
-	// 	if (helper->value)
-	// 		free(helper->value);
-	// 	return ;
-	// }
-    add_or_update(lst, helper->key, helper->value);
+    
+    if (!is_valide_key(key))
+    {
+        free(key);
+        free(value);
+        return;
+    }
+    
+    add_or_update(lst, key, value);
+    
+    // Free our copies since add_or_update makes its own copies
+    free(key);
+    free(value);
 }
-// void add_or_update(t_env **env, char *key, char *value) //add_environment
+// void ft_ex(char **str, t_env **lst)
 // {
-//     t_env *tmp;
-//     t_env *new = NULL;
-//     int flag = 0;
+//     t_env   *helper;
+//     char    **spliting_input;
+//     int     i = 0;
 
-//     tmp = *env;
-//     while(tmp != NULL)
+//     helper = *lst;
+//         printf("hehhdhdhdh\n");
+//     if(!str[1])
+//         return ;
+//     i = check_syntax_expo(str[1]);
+// 	if (i != 0)
+// 	{
+// 		helper->defined = 1;
+// 		helper->key = ft_substr(str[1], 0, i);
+// 		helper->value = ft_substr(str[1], i + 2, strlen(str[1]) - (i + 2));
+// 	}
+//     else
 //     {
-//         if(strcmp(tmp->key, key) == 0)
-//         {
-//             free(tmp->value);
-//             if(value != NULL)
-//                 tmp->value = strdup(value);
-//             else
-//                 tmp->value = strdup(""); // Use empty string for consistency
-            
-//             if(!tmp->value) // Check if strdup failed
-//                 return; // Handle error appropriately
-                
-//             flag = 1;
-//             break;
-//         }
-//         tmp = tmp->next;
+//         spliting_input = ft_split(str[1], '=');
+// 		printf("%s\n", spliting_input[0]);
+// 		// if(!spliting_input[0] || spliting_input[1] || !spliting_input)
+// 		// {
+// 		// 	free(spliting_input[0]);
+// 		// 	free(spliting_input[1]);
+// 		// 	free(spliting_input);
+// 		// }
+// 		// printf("%s\n", spliting_input[1]);
+//         helper->key = spliting_input[0];
+//         helper->value = spliting_input[1];
 //     }
-//     if(!flag)
-//     {
-//         new = malloc(sizeof(t_env));
-//         if(!new)
-//             return;
-            
-//         new->key = strdup(key);
-//         if(!new->key) {
-//             free(new);
-//             return;
-//         }
-        
-//         if(value != NULL)
-//             new->value = strdup(value);
-//         else
-//             new->value = strdup("");
-            
-//         if(!new->value) {
-//             free(new->key);
-//             free(new);
-//             return;
-//         }
-        
-//         new->next = NULL;
-//         ft_lstadd_back(env, new);
-//     }
+// 	// if (!is_valide_key(helper->key))
+// 	// {
+// 	// 	free(helper->key);
+// 	// 	if (helper->value)
+// 	// 		free(helper->value);
+// 	// 	return ;
+// 	// }
+//     add_or_update(lst, helper->key, helper->value);
 // }
-
-void ft_export(char *env[], char **str)
+void ft_export(char *env[], char **str, t_env **env_list)
 {
-    t_env *list = NULL;
     if(!str[1])
     {
-        list = env_maker(env, &list);
-        list = sort_env(&list);
-        t_env *tmp = list;
+        // Display sorted environment variables
+        t_env *display_list = NULL;
+        display_list = env_maker(env, &display_list);
+        display_list = sort_env(&display_list);
+        t_env *tmp = display_list;
         while(tmp)
         {
             printf("declare -x %s=%s\n", tmp->key, tmp->value);
             tmp = tmp->next;
         }
+        // Free the temporary display list
+        // ...
     }
-	else
-	{
-		ft_ex(str, &list);
-	}
-
+    else
+    {
+        ft_ex(str, env_list);  // Pass the actual environment list
+    }
 }
+// void ft_export(char *env[], char **str)
+// {
+//     t_env *list = NULL;
+//     if(!str[1])
+//     {
+//         list = env_maker(env, &list);
+//         list = sort_env(&list);
+//         t_env *tmp = list;
+//         while(tmp)
+//         {
+//             printf("declare -x %s=%s\n", tmp->key, tmp->value);
+//             tmp = tmp->next;
+//         }
+//     }
+// 	else
+// 	{
+// 		ft_ex(str, &list);
+// 	}
+
+// }
 
 
 

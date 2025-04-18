@@ -32,7 +32,8 @@ void    ft_exit(char **args);
 void	ft_putstr_fd(char *s, int fd);
 // t_env **env_maker(char *env[], t_env **env_struct);
 t_env *env_maker(char *env[], t_env **env_struct);
-void ft_export(char *env[], char **str);
+// void ft_export(char *env[], char **str);
+void ft_export(char *env[], char **str, t_env **env_list);
 typedef struct s_command
 {
     char *command;         // Command name (e.g., "ls", "grep")
