@@ -20,7 +20,6 @@ typedef struct s_env
 
 char	**ft_split(char const *s, char c);
 char	*ft_strjoin(char const *s1, char const *s2);
-void ft_export(char **str);
 void	ft_lstadd_back(t_env **lst, t_env *new);
 void echo(char **argv);
 int    ft_strcmp(char *s1, char *s2);
@@ -31,8 +30,9 @@ void ft_unset(t_env **env_list, char *variables);
 int remove_env(t_env **env_list, char *variable);
 void    ft_exit(char **args);
 void	ft_putstr_fd(char *s, int fd);
-
-
+// t_env **env_maker(char *env[], t_env **env_struct);
+t_env *env_maker(char *env[], t_env **env_struct);
+void ft_export(char *env[], char **str);
 typedef struct s_command
 {
     char *command;         // Command name (e.g., "ls", "grep")

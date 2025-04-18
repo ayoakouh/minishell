@@ -6,7 +6,7 @@ NAME = minishell
 
 # Source files
 SRCS = builting_command.c export.c ft_split.c ft_strjoin.c libft_utils.c echo.c \
-		ft_unset.c ft_cd.c main.c ft_exit.c
+		ft_unset.c ft_cd.c main.c ft_exit.c env.c exp.c
 
 # Object files
 OBJS = $(SRCS:.c=.o)

@@ -1,185 +1,196 @@
-#include "minishell.h"
-char	*ft_substr(char *s, unsigned int start, size_t len)
-{
-	char	*ptr;
-	size_t	i;
-	size_t	l;
+// #include "minishell.h"
+// char	*ft_substr(char *s, unsigned int start, size_t len)
+// {
+// 	char	*ptr;
+// 	size_t	i;
+// 	size_t	l;
 
-	i = 0;
-	if (s == NULL)
-		return (NULL);
-	l = strlen(s);
-	if (start >= l)
-		return (strdup(""));
-	if (len > l - start)
-		len = l - start;
-	ptr = (char *)malloc(sizeof(char) * len + 1);
-	if (ptr == NULL)
-		return (NULL);
-	while (i < len)
-	{
-		ptr[i] = s[start + i];
-		i++;
-	}
-	ptr[len] = '\0';
-	return (ptr);
-}
+// 	i = 0;
+// 	if (s == NULL)
+// 		return (NULL);
+// 	l = strlen(s);
+// 	if (start >= l)
+// 		return (strdup(""));
+// 	if (len > l - start)
+// 		len = l - start;
+// 	ptr = (char *)malloc(sizeof(char) * len + 1);
+// 	if (ptr == NULL)
+// 		return (NULL);
+// 	while (i < len)
+// 	{
+// 		ptr[i] = s[start + i];
+// 		i++;
+// 	}
+// 	ptr[len] = '\0';
+// 	return (ptr);
+// }
 
-int	is_valide_key(char *key)
-{
-    int i;
+// int	is_valide_key(char *key)
+// {
+//     int i;
 
-    i = 0;
-    if(!key)
-        return (0);
-    if (!(key[0] >= 'a' && key[0] <= 'z') && key[0] != '_')
-        return (0);
-    while(key[i] != '\0')   // this must be checked;
-    {
-        if(!(key[i] >= 'a' && key[i] <= 'z') && key[i] != '_' && !(key[i] >= '0' && key[i] <= '9'))
-            return (0);
-        i++;
-    }
-    return (1);
-}
-void add_or_update(t_env **env, char *key, char *value) //add_environment;
-{
-	t_env	*tmp;
-	t_env	*new = NULL;
-	int flag = 0;
+//     i = 0;
+//     if(!key)
+//         return (0);
+//     if (!(key[0] >= 'a' && key[0] <= 'z') && key[0] != '_')
+//         return (0);
+//     while(key[i] != '\0')   // this must be checked;
+//     {
+//         if(!(key[i] >= 'a' && key[i] <= 'z') && key[i] != '_' && !(key[i] >= '0' && key[i] <= '9'))
+//             return (0);
+//         i++;
+//     }
+//     return (1);
+// }
+// void add_or_update(t_env **env, char *key, char *value) //add_environment;
+// {
+// 	t_env	*tmp;
+// 	t_env	*new = NULL;
+// 	int flag = 0;
 
-	tmp = *env;
-	while(tmp != NULL)
-	{
-		if(strcmp(tmp->key, key) == 0)
-		{
+// 	tmp = *env;
+// 	while(tmp != NULL)
+// 	{
+// 		if(strcmp(tmp->key, key) == 0)
+// 		{
 
-			free(tmp->value);
-			if(value != NULL)
-				tmp->value = strdup(value);
-			else
-				tmp->value = strdup(" ");
-			flag = 1;
-			break ;
-		}
-		tmp = tmp->next;
-	}
-	if(!flag)
-	{
-		new = malloc(sizeof(t_env));
-		if(!new)
-			return ;
-		new->key = strdup(key);
-		if(value != NULL)
-			new->value = strdup(value);
-		else
-			new->value = strdup("");
-		new->next = NULL;
+// 			free(tmp->value);
+// 			if(value != NULL)
+// 				tmp->value = strdup(value);
+// 			else
+// 				tmp->value = strdup(" ");
+// 			flag = 1;
+// 			break ;
+// 		}
+// 		tmp = tmp->next;
+// 	}
+// 	if(!flag)
+// 	{
+// 		new = malloc(sizeof(t_env));
+// 		if(!new)
+// 			return ;
+// 		new->key = strdup(key);
+// 		if(value != NULL)
+// 			new->value = strdup(value);
+// 		else
+// 			new->value = strdup("");
+// 		new->next = NULL;
 
-	ft_lstadd_back(env, new);
-	}
-}
-int check_syntax_expo(char **str)
-{
-	int i = 0;
-	int j = 0;
-	while(str[i])
-	{
-		j = 0;
-		while(str[i][j])
-		{
-			if(str[i][j] == '+' && str[i][j+1] == '=')
-				return (j);
-			j++;
-		}
-		i++;
-	}
-	return (0);
-}
-int len_string(char *str)
-{
-	int i = 0;
-	while(str[i] && str[i] != '=')
-		i++;
-	int j = 0;
-	while(str[i])
-	{
-		i++;
-		j++;
-	}
-	return (j);
-}
-void ft_export(char **str)
-{
-	t_env	*helper = NULL;
-	char	**spliting_input;
-	char	*key;
-	char	*value;
-	char	*old_value;
-	char	*new_value;
-	int		append_mode = 0;
-	int		i;
+// 	ft_lstadd_back(env, new);
+// 	}
+// }
+// int check_syntax_expo(char **str)
+// {
+// 	int i = 0;
+// 	int j = 0;
+// 	while(str[i])
+// 	{
+// 		j = 0;
+// 		while(str[i][j])
+// 		{
+// 			if(str[i][j] == '+' && str[i][j+1] == '=')
+// 				return (j);
+// 			j++;
+// 		}
+// 		i++;
+// 	}
+// 	return (0);
+// }
+// int len_string(char *str)
+// {
+// 	int i = 0;
+// 	while(str[i] && str[i] != '=')
+// 		i++;
+// 	int j = 0;
+// 	while(str[i])
+// 	{
+// 		i++;
+// 		j++;
+// 	}
+// 	return (j);
+// }
+// void ft_export(char **str)
+// {
+// 	t_env	*helper = NULL;
+// 	char	**spliting_input;
+// 	char	*key;
+// 	char	*value;
+// 	char	*old_value;
+// 	char	*new_value;
+// 	int		append_mode = 0;
+// 	int		i;
 
-	if (!str[2])
-		return;
+// 	if (!str[2])
+// 		return;
 
-	// Check if the argument contains +=
-	i = check_syntax_expo(str);
-	if (i != 0)
-	{
-		append_mode = 1;
-		key = ft_substr(str[2], 0, i);
-		value = ft_substr(str[2], i + 2, strlen(str[2]) - (i + 2));
-	}
-	else
-	{
-		spliting_input = ft_split(str[2], '=');
-		key = strdup(spliting_input[0]);
-		value = spliting_input[1] ? strdup(spliting_input[1]) : NULL;
-	}
+// 	// Check if the argument contains +=
+// 	i = check_syntax_expo(str);
+// 	if (i != 0)
+// 	{
+// 		append_mode = 1;
+// 		key = ft_substr(str[2], 0, i);
+// 		value = ft_substr(str[2], i + 2, strlen(str[2]) - (i + 2));
+// 	}
+// 	else
+// 	{
+// 		spliting_input = ft_split(str[2], '=');
+// 		key = strdup(spliting_input[0]);
+// 		value = spliting_input[1] ? strdup(spliting_input[1]) : NULL;
+// 	}
 
-	if (!is_valide_key(key))
-	{
-		free(key);
-		if (value)
-			free(value);
-		return;
-	}
+// 	if (!is_valide_key(key))
+// 	{
+// 		free(key);
+// 		if (value)
+// 			free(value);
+// 		return;
+// 	}
 
-	if (append_mode)
-	{
-		t_env *tmp = helper;
-		while (tmp)
-		{
-			if (strcmp(tmp->key, key) == 0)
-			{
-				old_value = tmp->value ? tmp->value : strdup("");
-				new_value = malloc(strlen(old_value) + strlen(value) + 1);
-				if (new_value)
-				{
-					strcpy(new_value, old_value);
-					strcat(new_value, value);
-					free(tmp->value);
-					tmp->value = new_value;
-				}
-				free(key);
-				free(value);
-				return;
-			}
-			tmp = tmp->next;
-		}
-		// If not found, just add as new
-		add_or_update(&helper, key, value);
-	}
-	else
-	{
-		add_or_update(&helper, key, value);
-	}
+// 	if (append_mode)
+// 	{
+// 		t_env *tmp = helper;
+// 		while (tmp)
+// 		{
+// 			if (strcmp(tmp->key, key) == 0)
+// 			{
+// 				old_value = tmp->value ? tmp->value : strdup("");
+// 				new_value = malloc(strlen(old_value) + strlen(value) + 1);
+// 				if (new_value)
+// 				{
+// 					strcpy(new_value, old_value);
+// 					strcat(new_value, value);
+// 					free(tmp->value);
+// 					tmp->value = new_value;
+// 				}
+// 				free(key);
+// 				free(value);
+// 				return;
+// 			}
+// 			tmp = tmp->next;
+// 		}
+// 		// If not found, just add as new
+// 		add_or_update(&helper, key, value);
+// 	}
+// 	else
+// 	{
+// 		add_or_update(&helper, key, value);
+// 	}
 
-	free(key);
-	if (value)
-		free(value);
-}
+// 	free(key);
+// 	if (value)
+// 		free(value);
+// }
+
+
+
+
+
+
+
+
+
+
+
 
 // void ft_export(char **str)
 // {
