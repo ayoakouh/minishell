@@ -127,6 +127,25 @@ void ft_exit(char **args)
     exit((int)n);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // void    ft_exit(char **args)
 // {
 //     long n ;

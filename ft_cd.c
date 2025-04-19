@@ -50,19 +50,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	copy_strings(ptr, s1, s2);
 	return (ptr);
 }
-int    ft_strcmp(char *s1, char *s2)
-{
-	int i = 0;
-	while(s1[i] || s2[i])
-	{
-		if(s1[i] > s2[i])
-			return(1);
-		if(s1[i] < s2[i])
-			return (-1);
-			i++;
-	}
-	return(0);
-}
 
 char *get_value_env(char *key, t_env **list)
 {
@@ -99,6 +86,7 @@ void    set_value_env(t_env **env, char *key, char *value)
 		tmp = tmp->next;
 	}
 }
+
 void updat_env(t_env **env_list, char *key, char *value)
 {
 	t_env *tmp;
@@ -120,8 +108,10 @@ void updat_env(t_env **env_list, char *key, char *value)
 		return;
 	new_node->key = strdup(key);
 	new_node->value = strdup(value);
+	new_node->next = NULL;
 	ft_lstadd_back(env_list, new_node);
 }
+
 char *get_path(char *str, t_env **list)
 {
 	char *path;
@@ -154,7 +144,7 @@ void ft_cd(char *str, t_env **list)
 		perror("error");
 		return ;
 	}
-	updat_env(list, "OLDPWD", get_value_env("PWD", list));
+	updat_env(list, "OLDPWD", value);
 	// set_value_env(list, "OLDPWD", get_value_env("PWD", list));
 	cwd = getcwd(NULL, 0);
 	set_value_env(list, "PWD", cwd);

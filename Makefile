@@ -1,12 +1,12 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -lreadline
 
 # Target executable name
 NAME = minishell
 
 # Source files
 SRCS = builting_command.c export.c ft_split.c ft_strjoin.c libft_utils.c echo.c \
-		ft_unset.c ft_cd.c main.c ft_exit.c env.c exp.c
+		ft_unset.c  main.c ft_exit.c env.c exp.c ft_cd.c
 
 # Object files
 OBJS = $(SRCS:.c=.o)
@@ -17,13 +17,14 @@ INCLUDES = minishell.h
 # Default target
 all: $(NAME)
 
+LDLIBS = -lreadline
 # Rule to compile source files to object files
 %.o: %.c $(INCLUDES)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@ 
 
 # Rule to link object files into the executable
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LDLIBS)
 
 # Clean object files
 clean:

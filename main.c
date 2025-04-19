@@ -11,15 +11,80 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int main(int ac, char **av, char *env[])
+void check_line(char *line, t_env *env)
 {
-    if (ac < 0)
-        return 0;
-	t_env **tmp = NULL;
-	// char **str
-	ft_export(env, av, tmp);
+    char **splited;
+    int        i;
+    
+    i = 0;
+    splited = ft_split(line, ' ');
+    while (splited[i])
+    {
+        // if (ft_strncmp("cd", splited[i] , 2) == 0 && ft_strlen(splited[i]) == 2)
+        //     change_dir(splited[i + 1], &env);
+        if (strncmp("export", splited[i], 6) == 0 && strlen(splited[i]) == 6)
+			ft_export(splited, &env);
+        // else if (ft_strncmp("env", splited[i], 3) == 0 && ft_strlen(splited[i]) == 3)
+        //     env_cmd(env);
+        // else if (ft_strncmp("exit", splited[i], 4) == 0 && ft_strlen(splited[i]) == 4)
+        //     ft_exit(0);
+        // else if (ft_strncmp("./minishell", splited[i], 11) == 0 && ft_strlen(splited[i]) ==  11)
+        //     minishell_cmd(&env);
+        // else if (ft_strncmp("unset", splited[i], 5) == 0 && ft_strlen(splited[i]) == 5)
+        //     unset(&env, splited[i + 1]);
+        // else if (ft_strncmp("echo", splited[i], 4) == 0 && ft_strlen(splited[i]) == 4)
+        //     my_echo(NULL, splited[i + 1]);
+        // else if (ft_strncmp("pwd", splited[i], 3) == 0 && ft_strlen(splited[i]) == 3)
+        //     my_pwd();
+        i++;
+    }
+    
 }
+
+
+int main(int argc, char *argv[], char *env[])
+{
+    t_env    *env_new = NULL;
+    char    *line;
+
+    (void)argv;
+	(void)argc;
+    if (!env || !*env)
+        return (1);
+    // if (argc < 0)
+    //     return (0);
+	env_new = env_maker(env, &env_new);
+    // env_new = creat_env(env);
+    // print_strcut(env_new);
+    // env_cmd(env_new);
+    // export(&env_new, argv[1]);
+    // env_cmd(env_new);
+	// t_env *tmp = 
+    while (1)
+    {
+      line = readline("minishell->");
+      if (!line && !*line)
+      {
+        write (2, "exit\n", 6);
+        break;
+      }
+      add_history(line);
+      check_line(line, env_new);
+      
+    }
+    
+    
+
+}
+// int main(int ac, char **av, char *env[])
+// {
+// 	t_env *tmp = NULL;
+//     if(ac < 0)
+// 	{
+//         return 0;
+// 	}
+// 	ft_export(env, av, &tmp);
+// }
 	// t_env *head;
 	// t_env *node1;
 	// t_env *node2;

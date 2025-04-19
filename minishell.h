@@ -7,6 +7,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
 
 
 typedef struct s_env
@@ -33,7 +36,12 @@ void	ft_putstr_fd(char *s, int fd);
 // t_env **env_maker(char *env[], t_env **env_struct);
 t_env *env_maker(char *env[], t_env **env_struct);
 // void ft_export(char *env[], char **str);
-void ft_export(char *env[], char **str, t_env **env_list);
+void ft_export(char **str, t_env **env_list);
+void updat_env(t_env **env_list, char *key, char *value);
+
+
+
+
 typedef struct s_command
 {
     char *command;         // Command name (e.g., "ls", "grep")
