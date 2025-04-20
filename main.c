@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-void check_line(char *line, t_env *env)
+void check_line(char *line, t_env *env, char *en[])
 {
     char **splited;
     int        i;
@@ -24,23 +24,22 @@ void check_line(char *line, t_env *env)
         //     change_dir(splited[i + 1], &env);
         if (strncmp("export", splited[i], 6) == 0 && strlen(splited[i]) == 6)
 			ft_export(splited, &env);
-        // else if (ft_strncmp("env", splited[i], 3) == 0 && ft_strlen(splited[i]) == 3)
-        //     env_cmd(env);
-        // else if (ft_strncmp("exit", splited[i], 4) == 0 && ft_strlen(splited[i]) == 4)
-        //     ft_exit(0);
-        // else if (ft_strncmp("./minishell", splited[i], 11) == 0 && ft_strlen(splited[i]) ==  11)
+        else if (strncmp("env", splited[i], 3) == 0 && strlen(splited[i]) == 3)
+            ft_env(env, en);
+        else if (strncmp("exit", splited[i], 4) == 0 && strlen(splited[i]) == 4)
+            ft_exit(0);
+        // else if (strncmp("./minishell", splited[i], 11) == 0 && strlen(splited[i]) ==  11)
         //     minishell_cmd(&env);
-        // else if (ft_strncmp("unset", splited[i], 5) == 0 && ft_strlen(splited[i]) == 5)
-        //     unset(&env, splited[i + 1]);
-        // else if (ft_strncmp("echo", splited[i], 4) == 0 && ft_strlen(splited[i]) == 4)
-        //     my_echo(NULL, splited[i + 1]);
-        // else if (ft_strncmp("pwd", splited[i], 3) == 0 && ft_strlen(splited[i]) == 3)
-        //     my_pwd();
+        else if (strncmp("unset", splited[i], 5) == 0 && strlen(splited[i]) == 5)
+            ft_unset(&env, splited[i + 1]);
+        else if (strncmp("echo", splited[i], 4) == 0 && strlen(splited[i]) == 4)
+            echo(splited);
+        else if (strncmp("pwd", splited[i], 3) == 0 && strlen(splited[i]) == 3)
+            pwd();
         i++;
     }
     
 }
-
 
 int main(int argc, char *argv[], char *env[])
 {
@@ -69,7 +68,7 @@ int main(int argc, char *argv[], char *env[])
         break;
       }
       add_history(line);
-      check_line(line, env_new);
+      check_line(line, env_new, env);
       
     }
     

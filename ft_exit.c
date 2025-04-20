@@ -101,7 +101,9 @@ void ft_exit(char **args)
     ft_putendl_fd("exit", 1);
     
     if (!args || !args[1])
+    {
         exit(0);
+    }
     if (!is_numeric(args[1]))
     {
         ft_putendl_fd("exit: numeric argument required", 2);

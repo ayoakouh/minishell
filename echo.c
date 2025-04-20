@@ -44,7 +44,7 @@ int handel_echo_n(char *str)
 
 void echo(char **argv)
 {
-    int i = 2;  
+    int i = 1;  
     int flag = 0;
 
     while (argv[i] && handel_echo_n(argv[i]) == 1)
@@ -65,7 +65,6 @@ void echo(char **argv)
     if (flag == 0)
         ft_putstr_fd("\n", 1);
 }
-
 // void echo(char **argv)
 // {
 //     int i = 2;  

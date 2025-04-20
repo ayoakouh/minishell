@@ -1,12 +1,12 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -lreadline
+CFLAGS = -Wall -Wextra -Werror -lreadline -g -fsanitize=address
 
 # Target executable name
 NAME = minishell
 
 # Source files
 SRCS = builting_command.c export.c ft_split.c ft_strjoin.c libft_utils.c echo.c \
-		ft_unset.c  main.c ft_exit.c env.c exp.c ft_cd.c
+		ft_unset.c  main.c ft_exit.c env.c exp.c ft_cd.c pwd.c 
 
 # Object files
 OBJS = $(SRCS:.c=.o)

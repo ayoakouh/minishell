@@ -25,22 +25,26 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	ptr[len] = '\0';
 	return (ptr);
 }
-int	is_valide_key(char *key)
+int	is_valid_key(char *key)
 {
-    int i;
+	int i;
 
-    i = 0;
-    if(!key)
-        return (0);
-    if (!(key[0] >= 'a' && key[0] <= 'z') && key[0] != '_')
-        return (0);
-    while(key[i] != '\0')   // this must be checked;
-    {
-        if(!(key[i] >= 'a' && key[i] <= 'z') && key[i] != '_' && !(key[i] >= '0' && key[i] <= '9'))
-            return (0);
-        i++;
-    }
-    return (1);
+	if (!key || (!((key[0] >= 'a' && key[0] <= 'z') || 
+	               (key[0] >= 'A' && key[0] <= 'Z') || 
+	               key[0] == '_')))
+		return (1); // invalid key;;;;
+
+	i = 1;
+	while (key[i] && key[i] != '=')
+	{
+		if (!((key[i] >= 'a' && key[i] <= 'z') ||
+		      (key[i] >= 'A' && key[i] <= 'Z') ||
+		      (key[i] >= '0' && key[i] <= '9') ||
+		      key[i] == '_') && key[i] == ' ')
+			return (1);
+		i++;
+	}
+	return (0); // valid;;;;
 }
 
 t_env *sort_env(t_env **head)
@@ -67,18 +71,6 @@ t_env *sort_env(t_env **head)
     return (helper);
 }
 
-int check_syntax_expo(char *str)
-{
-	int i = 0;
-
-	while(str[i])
-	{
-        if(str[i] == '+' && str[i + 1] == '=')
-            return (i);
-        i++;
-    }
-    return(0);
-}
 char *get_value(char *str) // spleted value;
 {
     int i = 0;
@@ -86,9 +78,9 @@ char *get_value(char *str) // spleted value;
     unsigned int len = 0;
     char *helper = NULL;
     while(str[i] && str[i] != '=' && str[i] != '+')
-        i++;
+    i++;
     while(str[i] == '=' || str[i] == '+')
-        i++;
+    i++;
     tmp = i;
     while(str[i])
     {
@@ -96,6 +88,8 @@ char *get_value(char *str) // spleted value;
         i++;
     }
     helper = ft_substr(str, tmp, len);
+    if (!helper)
+    return (NULL);
     return (helper);
 }
 char    *get_key(char *str)  // spleted key;
@@ -104,46 +98,130 @@ char    *get_key(char *str)  // spleted key;
     while(str[i])
     {
         if(str[i] == '+' && str[i + 1] == '=')
-            break ;
+        break ;
         if (str[i] == '=')
-            break ;
+        break ;
         i++;
     }
     char *helper = ft_substr(str, 0, i);
     if(!helper)
-        return (NULL);
+    return (NULL);
     return (helper);
 }
-// char *get_key_env(char *key, t_env **list)
+
+char *get_env_var(char *key, t_env **list) // this for searche varible of any key;;
+{
+    t_env   *tmp;
+    
+    tmp = *list;
+    while(tmp)
+    {
+        if(ft_strcmp(tmp->key, key) == 0)
+        return (tmp->value);
+        tmp = tmp->next;
+    }
+    return (NULL);
+}
+
+void check_append(char *str, t_env **lst)
+{
+    int i = 0;
+    t_env *tmp;
+
+    tmp = *lst;
+    while (str[i])
+    {
+        if (str[i] == '+' && str[i + 1] == '=')
+        {
+            tmp->operation = '+';
+            return ;
+        }
+        else if (str[i] == '=')
+        {
+            tmp->operation = '=';
+            return ;
+        }
+        i++;
+    }
+}
+
+void    set_env(t_env **env, char *key, char *value)
+{
+	t_env *tmp;
+
+	tmp = *env;
+	while(tmp)
+	{
+		if(ft_strcmp(tmp->key, key) == 0)
+		{
+			if (tmp->value)
+                tmp->value = ft_strjoin(tmp->value, value);
+		}
+		tmp = tmp->next;
+	}
+}
+
+// void is_not_key_here(t_env **env, char *key, char *value)
 // {
-//     t_env   *tmp;
+//     t_env *tmp;
 
-//     tmp = *list;
-//     while(tmp)
-//     {
-//         if(ft_strcmp(tmp->key, key) == 0)
-//             return (tmp->value);
-//         tmp = tmp->next;
-//     }
-//     return (NULL);
+//     tmp = *env;
+// 	while(tmp)
+// 	{
+// 		if(ft_strcmp(tmp->key, key) == 0)
+// 		{
+// 			if (tmp->value)
+//                 tmp->value = ft_strjoin(tmp->value, value);
+// 			return (tmp->value);
+// 		}
+// 		tmp = tmp->next;
+// 	}
 // }
-
-
-void ft_ex(char **str, t_env **lst)
+int ft_ex(char **str, t_env **lst)
 {
     int i = 0;
 
     char *key = NULL;
     char *value = NULL;
+    t_env *tmp;
 
+    tmp = *lst;
     while(str[i])
     {
         key = get_key(str[i]);
+        if(is_valid_key(key) == 1)
+            return (1);
         value = get_value(str[i]);      
-        updat_env(lst, key, value);
+        check_append(str[i], lst);
+        // printf("%d\n", tmp->operation);
+        if(tmp->operation == '+')
+        {
+            set_env(lst, key, value);
+            // retrun (0);
+        }
+        else
+            updat_env(lst, key, value);
         i++;
     }
+    return (0);
 }
+// void ft_ex(char **str, t_env **lst)
+// {
+//     int i = 0;
+
+//     char *key = NULL;
+//     char *value = NULL;
+//     t_
+
+//     while(str[i])
+//     {
+//         if(check_syntax_expo())
+//         key = get_key(str[i]);
+//         value = get_value(str[i]);      
+//         updat_env(lst, key, value);
+//         i++;
+//     }
+// }
 void ft_export( char **str, t_env **env_list)
 {
     *env_list = sort_env(env_list);
@@ -158,7 +236,18 @@ void ft_export( char **str, t_env **env_list)
     }
     else
     {
-        ft_ex(str + 1, env_list);
+        // if(is_valid_key(str[1]) == 1)
+        // {
+        //     printf("hehehehe\n");
+        //     printf("minishell: export: %s : not valid identifier\n", str[1]);
+        //     return ;
+        // }
+            if(ft_ex(str + 1, env_list) == 1)
+            {
+            // printf("hehehehe\n");
+                printf("minishell: export: %s : not valid identifier\n", str[1]);
+            return ;     
+            }
     }
 }
 
