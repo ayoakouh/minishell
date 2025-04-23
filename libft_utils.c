@@ -11,22 +11,22 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-void ft_free(t_env **list)
-{
-	t_env *tmp;
+// void ft_free(t_env **list)
+// {
+// 	t_env *tmp;
 
-	tmp = *list;
-	t_env *tmp2;
-	while(tmp)
-	{
-		free(tmp->key);
-		free(tmp->value);
-		tmp2 = tmp;
-		free(tmp);
-		tmp = tmp2;
-		tmp = tmp->next;
-	}
-}
+// 	tmp = *list;
+// 	t_env *tmp2;
+// 	while(tmp)
+// 	{
+// 		free(tmp->key);
+// 		free(tmp->value);
+// 		tmp2 = tmp;
+// 		free(tmp);
+// 		tmp = tmp2;
+// 		tmp = tmp->next;
+// 	}
+// }
 char	*ft_strchr(char *s, int c)
 {
 	int		i;
@@ -88,4 +88,30 @@ void	ft_lstadd_back(t_env **lst, t_env *new)
 		current = current->next;
 	}
 	current ->next = new;
+}
+
+char	*ft_substr(char *s, unsigned int start, size_t len)
+{
+	char	*ptr;
+	size_t	i;
+	size_t	l;
+
+	i = 0;
+	if (s == NULL)
+		return (NULL);
+	l = strlen(s);
+	if (start >= l)
+		return (strdup(""));
+	if (len > l - start)
+		len = l - start;
+	ptr = (char *)malloc(sizeof(char) * len + 1);
+	if (ptr == NULL)
+		return (NULL);
+	while (i < len)
+	{
+		ptr[i] = s[start + i];
+		i++;
+	}
+	ptr[len] = '\0';
+	return (ptr);
 }

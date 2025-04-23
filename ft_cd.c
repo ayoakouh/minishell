@@ -99,6 +99,7 @@ void updat_env(t_env **env_list, char *key, char *value)
 		{
 			free(tmp->value);
 			tmp->value = strdup(value);
+			tmp->operation = 0;
 			return;
 		}
 		tmp = tmp->next;
@@ -108,6 +109,7 @@ void updat_env(t_env **env_list, char *key, char *value)
 		return;
 	new_node->key = strdup(key);
 	new_node->value = strdup(value);
+	new_node->operation = 0;
 	new_node->next = NULL;
 	ft_lstadd_back(env_list, new_node);
 }
@@ -117,10 +119,8 @@ char *get_path(char *str, t_env **list)
 	char *path;
 
 	path = NULL;
-	printf("......%s\n", str);
 	if(str == NULL || str[0] == '~')
 	{
-		printf("helle \n");
 		path = get_value_env(strdup("HOME"), list); //i have smale probleme in this null;
 		if(!path)
 			return(NULL);
@@ -131,13 +131,14 @@ char *get_path(char *str, t_env **list)
 	}
 	return (path);
 }
-void ft_cd(char *str, t_env **list)
+
+void ft_cd(char **str, t_env **list)
 {
 	char *cwd;
 	char *new_cwd;
 	char *value;
 
-	new_cwd = get_path(str, list);
+	new_cwd = get_path(str[1], list);
 	value = get_value_env("PWD", list);
 	if(!new_cwd || chdir(new_cwd) == -1)
 	{
@@ -150,24 +151,7 @@ void ft_cd(char *str, t_env **list)
 	set_value_env(list, "PWD", cwd);
 	free(cwd);
 }
-// void	cd(char **args)
-// {
-// 	int	i;
 
-// 	// i = -1;
-// 	// while (args[++i])
-// 	// 	;
-// 	// if (i > 2)
-// 	// {
-
-// 	// 	return ;
-// 	// }
-// 	// if (!args[1])
-// 	// 	args[1] = NULL;
-// 	handel_path(args[2]);
-
-
-// }
 
 
 // int main(int ac, char **av)

@@ -1,30 +1,5 @@
 #include "minishell.h"
 
-char	*ft_substr(char *s, unsigned int start, size_t len)
-{
-	char	*ptr;
-	size_t	i;
-	size_t	l;
-
-	i = 0;
-	if (s == NULL)
-		return (NULL);
-	l = strlen(s);
-	if (start >= l)
-		return (strdup(""));
-	if (len > l - start)
-		len = l - start;
-	ptr = (char *)malloc(sizeof(char) * len + 1);
-	if (ptr == NULL)
-		return (NULL);
-	while (i < len)
-	{
-		ptr[i] = s[start + i];
-		i++;
-	}
-	ptr[len] = '\0';
-	return (ptr);
-}
 int	is_valid_key(char *key)
 {
 	int i;
@@ -44,7 +19,7 @@ int	is_valid_key(char *key)
 			return (1);
 		i++;
 	}
-	return (0); // valid;;;;
+	return (0);
 }
 
 t_env *sort_env(t_env **head)
@@ -89,7 +64,7 @@ char *get_value(char *str) // spleted value;
     }
     helper = ft_substr(str, tmp, len);
     if (!helper)
-    return (NULL);
+        return (NULL);
     return (helper);
 }
 char    *get_key(char *str)  // spleted key;
@@ -105,124 +80,84 @@ char    *get_key(char *str)  // spleted key;
     }
     char *helper = ft_substr(str, 0, i);
     if(!helper)
-    return (NULL);
+        return (NULL);
     return (helper);
 }
 
-char *get_env_var(char *key, t_env **list) // this for searche varible of any key;;
-{
-    t_env   *tmp;
-    
-    tmp = *list;
-    while(tmp)
-    {
-        if(ft_strcmp(tmp->key, key) == 0)
-        return (tmp->value);
-        tmp = tmp->next;
-    }
-    return (NULL);
-}
 
-void check_append(char *str, t_env **lst)
+int check_append(char *str)
 {
     int i = 0;
-    t_env *tmp;
-
-    tmp = *lst;
+    
     while (str[i])
     {
         if (str[i] == '+' && str[i + 1] == '=')
         {
-            tmp->operation = '+';
-            return ;
+            return ('+');
         }
         else if (str[i] == '=')
         {
-            tmp->operation = '=';
-            return ;
+            return ('=');
         }
         i++;
     }
+    return (0);
 }
 
 void    set_env(t_env **env, char *key, char *value)
 {
-	t_env *tmp;
-
+    t_env *tmp;
+    
 	tmp = *env;
 	while(tmp)
 	{
-		if(ft_strcmp(tmp->key, key) == 0)
+        if(ft_strcmp(tmp->key, key) == 0)
 		{
-			if (tmp->value)
-                tmp->value = ft_strjoin(tmp->value, value);
+            if (tmp->value)
+            tmp->value = ft_strjoin(tmp->value, value);
+            tmp->operation = 0;
 		}
 		tmp = tmp->next;
 	}
 }
 
-// void is_not_key_here(t_env **env, char *key, char *value)
-// {
-//     t_env *tmp;
-
-//     tmp = *env;
-// 	while(tmp)
-// 	{
-// 		if(ft_strcmp(tmp->key, key) == 0)
-// 		{
-// 			if (tmp->value)
-//                 tmp->value = ft_strjoin(tmp->value, value);
-// 			return (tmp->value);
-// 		}
-// 		tmp = tmp->next;
-// 	}
-// }
-int ft_ex(char **str, t_env **lst)
+void  ft_handel_export(char **str, t_env **lst)
 {
     int i = 0;
-
+    
     char *key = NULL;
     char *value = NULL;
-    t_env *tmp;
 
-    tmp = *lst;
     while(str[i])
     {
         key = get_key(str[i]);
         if(is_valid_key(key) == 1)
-            return (1);
-        value = get_value(str[i]);      
-        check_append(str[i], lst);
-        // printf("%d\n", tmp->operation);
-        if(tmp->operation == '+')
         {
+            printf("minishell: export: %s : not valid identifier\n", str[1]);
+        }
+        value = get_value(str[i]);
+        int c = check_append(str[i]);
+        if(c == '+')
+        { 
+            printf("00000\n");
             set_env(lst, key, value);
-            // retrun (0);
+        }
+        else if (c == '=')
+        {
+            printf("11111\n");
+            updat_env(lst, key, value);
         }
         else
-            updat_env(lst, key, value);
+        {
+            printf("333333\n");
+            value_empty(lst, key, value);
+        }
         i++;
     }
-    return (0);
+    
 }
-// void ft_ex(char **str, t_env **lst)
-// {
-//     int i = 0;
 
-//     char *key = NULL;
-//     char *value = NULL;
-//     t_
-
-//     while(str[i])
-//     {
-//         if(check_syntax_expo())
-//         key = get_key(str[i]);
-//         value = get_value(str[i]);      
-//         updat_env(lst, key, value);
-//         i++;
-//     }
-// }
-void ft_export( char **str, t_env **env_list)
+void ft_export(char **str, t_env **env_list)
 {
     *env_list = sort_env(env_list);
     if(!str[1])
@@ -230,24 +165,33 @@ void ft_export( char **str, t_env **env_list)
         t_env *tmp = *env_list;
         while(tmp)
         {
-            printf("declare -x %s=%s\n", tmp->key, tmp->value);
+            if(tmp->operation == 1)
+            printf("declare -x %s\n", tmp->key);
+            else
+            {
+                printf("declare -x %s=\"%s\"\n", tmp->key, tmp->value);
+            }
             tmp = tmp->next;
         }
     }
     else
     {
-        // if(is_valid_key(str[1]) == 1)
-        // {
-        //     printf("hehehehe\n");
-        //     printf("minishell: export: %s : not valid identifier\n", str[1]);
-        //     return ;
-        // }
-            if(ft_ex(str + 1, env_list) == 1)
-            {
-            // printf("hehehehe\n");
-                printf("minishell: export: %s : not valid identifier\n", str[1]);
-            return ;     
-            }
+        ft_handel_export(str + 1, env_list);
+        return;     
     }
 }
 
+                
+// char *get_env_var(char *key, t_env **list) // this for searche varible of any key;;
+// {
+//     t_env   *tmp;
+                    
+//     tmp = *list;
+//     while(tmp)
+//     {
+                //         if(ft_strcmp(tmp->key, key) == 0)
+                //         return (tmp->value);
+                //         tmp = tmp->next;
+                //     }
+                //     return (NULL);
+                // }

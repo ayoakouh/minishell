@@ -118,7 +118,6 @@ void ft_exit(char **args)
     if (n == LONG_MAX && ft_strcmp(args[1], "9223372036854775807") != 0)
     {
         ft_putendl_fd("exit: numeric argument required", 2);
-        printf("255\n");
         exit(255);
     }
     if(n < 0)

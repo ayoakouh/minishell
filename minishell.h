@@ -10,6 +10,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 
 
 
@@ -29,11 +30,11 @@ char	*ft_strchr(char *s, int c);
 char	**ft_split(char const *s, char c);
 char	*ft_strjoin(char const *s1, char const *s2);
 void	ft_lstadd_back(t_env **lst, t_env *new);
+char	*ft_substr(char *s, unsigned int start, size_t len);
+
 void echo(char **argv);
 int    ft_strcmp(char *s1, char *s2);
 void del(void *content);
-// void remove_env(t_env **env_list, char *variable);
-// void ft_unset(t_env **env_list, char *variable);
 void ft_unset(t_env **env_list, char *variables);
 int remove_env(t_env **env_list, char *variable);
 void    ft_exit(char **args);
@@ -44,7 +45,11 @@ t_env *env_maker(char *env[], t_env **env_struct);
 void ft_export(char **str, t_env **env_list);
 void updat_env(t_env **env_list, char *key, char *value);
 void pwd(void);
-
+void ft_excute_commands(char **args, t_env **list);
+void env_null(t_env **list);
+void ft_cd(char **str, t_env **list);
+void    ft_free_split(char **str);
+void value_empty(t_env **env_list, char *key, char *value);
 
 
 

@@ -124,7 +124,17 @@ t_env *env_maker(char *env[], t_env **env_struct)
 void ft_env(t_env *env_list, char *env[])
 {
 	t_env *tmp;
-
+	if(!env || !*env)
+	{
+		env_null(&env_list);
+		tmp = env_list;
+		while(tmp)
+		{
+			printf("declare -x %s=%s\n", tmp->key, tmp->value);
+			tmp = tmp->next;
+		}
+		return ;
+	}
 	env_list = env_maker(env, &env_list);
 	tmp = env_list;
 	while(tmp)

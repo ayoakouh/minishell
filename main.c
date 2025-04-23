@@ -11,6 +11,39 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+int exec_builtin(char **args)
+{
+    if (strcmp(args[0], "cd") == 0)
+        return (0);
+    else if (strcmp(args[0], "echo") == 0)
+        return (0);
+    else if (strcmp(args[0], "unset") == 0)
+        return (0);
+    else if (strcmp(args[0], "export") == 0)
+        return (0);
+        else if (strcmp(args[0], "pwd") == 0)
+            return (0);
+        else if (strcmp(args[0], "env") == 0)
+            return (0);
+        else if (strcmp(args[0], "exit") == 0)
+            return (0);
+        else
+            return (1);
+}
+void minishell_cmd(char *env[])
+{
+    pid_t pid = fork();
+if (pid == 0)
+{
+    char *args[] = {"./minishell", NULL};
+    execve("./minishell", args, env);
+}
+else
+{
+    waitpid(pid, NULL, 0);
+}
+
+}
 void check_line(char *line, t_env *env, char *en[])
 {
     char **splited;
@@ -18,27 +51,35 @@ void check_line(char *line, t_env *env, char *en[])
     
     i = 0;
     splited = ft_split(line, ' ');
-    while (splited[i])
+    if(!exec_builtin(splited))
     {
-        // if (ft_strncmp("cd", splited[i] , 2) == 0 && ft_strlen(splited[i]) == 2)
-        //     change_dir(splited[i + 1], &env);
-        if (strncmp("export", splited[i], 6) == 0 && strlen(splited[i]) == 6)
-			ft_export(splited, &env);
-        else if (strncmp("env", splited[i], 3) == 0 && strlen(splited[i]) == 3)
-            ft_env(env, en);
-        else if (strncmp("exit", splited[i], 4) == 0 && strlen(splited[i]) == 4)
-            ft_exit(0);
-        // else if (strncmp("./minishell", splited[i], 11) == 0 && strlen(splited[i]) ==  11)
-        //     minishell_cmd(&env);
-        else if (strncmp("unset", splited[i], 5) == 0 && strlen(splited[i]) == 5)
-            ft_unset(&env, splited[i + 1]);
-        else if (strncmp("echo", splited[i], 4) == 0 && strlen(splited[i]) == 4)
-            echo(splited);
-        else if (strncmp("pwd", splited[i], 3) == 0 && strlen(splited[i]) == 3)
-            pwd();
-        i++;
+        while (splited[i])
+        {
+            if (strncmp("export", splited[i], 6) == 0 && strlen(splited[i]) == 6)
+                ft_export(splited, &env);
+            else if (strncmp("env", splited[i], 3) == 0 && strlen(splited[i]) == 3)
+                ft_env(env, en);
+            else if (strncmp("exit", splited[i], 4) == 0 && strlen(splited[i]) == 4)
+                ft_exit(splited);
+            else if (strncmp("./minishell", splited[i], 11) == 0 && strlen(splited[i]) ==  11)
+            {
+                ft_free_split(splited);
+                minishell_cmd(en);
+            }
+            else if (strncmp("unset", splited[i], 5) == 0 && strlen(splited[i]) == 5)
+                ft_unset(&env, splited[i + 1]);
+            else if (strncmp("echo", splited[i], 4) == 0 && strlen(splited[i]) == 4)
+                echo(splited);
+            else if (strncmp("pwd", splited[i], 3) == 0 && strlen(splited[i]) == 3)
+                pwd();
+            else if (strncmp("cd", splited[i], 2) == 0 && strlen(splited[i]) == 2)
+                ft_cd(splited, &env);
+            i++;
+        }
+        ft_free_split(splited);
     }
-    
+    else
+        ft_excute_commands(splited, &env);
 }
 
 int main(int argc, char *argv[], char *env[])
@@ -46,10 +87,17 @@ int main(int argc, char *argv[], char *env[])
     t_env    *env_new = NULL;
     char    *line;
 
+
     (void)argv;
 	(void)argc;
-    if (!env || !*env)
-        return (1);
+    // int i = 0;
+    // while(env[i])
+    // {
+    //     printf("%s\n", env[i]);
+    //     i++;
+    // }
+    // if (!env || !*env)
+    //     return (1);
     // if (argc < 0)
     //     return (0);
 	env_new = env_maker(env, &env_new);
@@ -61,20 +109,22 @@ int main(int argc, char *argv[], char *env[])
 	// t_env *tmp = 
     while (1)
     {
-      line = readline("minishell->");
-      if (!line && !*line)
+      line = readline("minishell-> ");
+      if (!line || !*line)
       {
         write (2, "exit\n", 6);
         break;
       }
       add_history(line);
       check_line(line, env_new, env);
-      
     }
     
-    
-
 }
+
+
+
+
+
 // int main(int ac, char **av, char *env[])
 // {
 // 	t_env *tmp = NULL;
