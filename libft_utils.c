@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstnew_bonus.c                                  :+:      :+:    :+:   */
+/*   libft_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 19:10:36 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/04/10 14:05:11 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/05/01 15:48:30 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,18 @@
 // 		tmp = tmp->next;
 // 	}
 // }
+int		ft_list_size(t_env *begin_list)
+{
+	int		size;
+	
+    size = 0;
+    while (begin_list)
+    {
+        begin_list = begin_list->next;
+        size += 1;
+    }
+	return (size);
+}
 char	*ft_strchr(char *s, int c)
 {
 	int		i;

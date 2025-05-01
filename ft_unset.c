@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 14:33:17 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/04/15 15:43:37 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/04/24 10:57:51 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,7 @@ int remove_env(t_env **env_list, char *variable)
 
     if (!*env_list)
         return (0);
-    
-    // Special case: if first node matches
+     
     if (ft_strcmp((*env_list)->key, variable) == 0)
     {
         to_delete = *env_list;
@@ -61,19 +60,23 @@ int remove_env(t_env **env_list, char *variable)
     return (0); // Variable not found
 }
 
-void ft_unset(t_env **env_list, char *variables)
+void ft_unset(t_env **env_list, char **variables)
 {
-    // int i;
+    int i;
     
-    // if (!variables)
-    //     return;
+    if (!variables)
+        return;
     
-    // i = 0;
-    // while (variables[i])
-    // {
-        remove_env(env_list, variables);
-    //     i++;
-    // }
+    i = 0;
+    while (variables[i])
+    {
+        if(is_valid_key(variables[i]))
+        {
+            printf("unset: `%s': not a valid identifier\n", variables[i]);
+        }
+        remove_env(env_list, variables[i]);
+        i++;
+    }
 }
 // #include "minishell.h"
 

@@ -132,9 +132,7 @@ void  ft_handel_export(char **str, t_env **lst)
     {
         key = get_key(str[i]);
         if(is_valid_key(key) == 1)
-        {
             printf("minishell: export: %s : not valid identifier\n", str[1]);
-        }
         value = get_value(str[i]);
         int c = check_append(str[i]);
         if(c == '+')
