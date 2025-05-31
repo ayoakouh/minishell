@@ -6,19 +6,27 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 12:34:07 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/04/24 18:27:44 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/05/19 15:56:08 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void pwd(void)
+int pwd(t_data data)
 {
-	char *path;
+	char	*pwd;
+	int		status;
 
-	path = getcwd(NULL, 0);
-	if(!path)
-		return ;
-	printf("%s\n", path);
-	free(path);
+	status = 0;
+	pwd = getcwd(NULL, 0);
+	if(!pwd)
+	{
+		pwd = data.new_pwd;
+		printf("%s\n", pwd);
+		return(status);
+	}
+	else
+		printf("%s\n", pwd);
+	free(pwd);
+	return (status);
 }

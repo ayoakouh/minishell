@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 14:33:17 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/04/24 10:57:51 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/05/21 11:18:58 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,16 @@ int remove_env(t_env **env_list, char *variable)
     t_env *tmp;
     t_env *to_delete;
 
-    if (!*env_list)
+    if (!*env_list || !env_list)
         return (0);
-     
     if (ft_strcmp((*env_list)->key, variable) == 0)
     {
+        puts("HHH\n");
         to_delete = *env_list;
         *env_list = (*env_list)->next;
-        del(to_delete->key);
+        // del(to_delete->key);
         del(to_delete->value);
-        free(to_delete);
+        // free(to_delete);
         return (1);
     }
     
@@ -60,23 +60,28 @@ int remove_env(t_env **env_list, char *variable)
     return (0); // Variable not found
 }
 
-void ft_unset(t_env **env_list, char **variables)
+int ft_unset(t_env **env_list, char **variables)
 {
     int i;
-    
-    if (!variables)
-        return;
+    int status;
     
     i = 0;
+    status = 0;
+    if (!variables)
+        return 0;
     while (variables[i])
     {
         if(is_valid_key(variables[i]))
         {
             printf("unset: `%s': not a valid identifier\n", variables[i]);
+            status = 1;
+            i++;
+            continue;
         }
         remove_env(env_list, variables[i]);
         i++;
     }
+    return (status);
 }
 // #include "minishell.h"
 

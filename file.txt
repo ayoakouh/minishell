@@ -1,0 +1,102 @@
+
+ayoakouh@e3r9p3 ft_clone % env -i ./minishell
+minishell $> unset PATH;;
+
+/
+//
+
+env | grep hola;;
+
+export -HOLA;;
+
+for export and env ;;;
+
+ unset PATHc
+ ls
+
+ page 13;;;
+ 
+
+
+
+
+ minishell $> unset PATH
+minishell $> ls
+minishell: ls: Not a directory
+minishell $> pwd
+/mnt/homes/ayoakouh/Desktop/ccccccc
+minishell $> ls
+minishell: ls: Not a directory
+minishell $> echo $?
+1
+
+> <Makefile cat | <main.c cat
+leaks;;;
+
+
+
+
+unset PATH and excute ..       >>>> check print_error;
+zsh: command not found: ..
+
+
+
+
+ unset $SHELVL $PWD $PATH $_
+
+ //,,
+
+
+cd 3ndi mochkil fe exit status ;;;
+
+dont remove path i
+
+
+
+
+
+ayoakouh@e3r6p1 ccccccc % ./minishell
+=====================0
+hshsh
+exit
+exit: too many arguments
+
+minishell $> ffff | echo $?
+=====================0
+hshsh
+0
+minishell: ffff: command not found
+minishell $> 
+
+minishell $> env a
+
+
+minishell $> "$""USER"
+=====================0
+hshsh
+minishell: USER: command not found
+minishell $> 
+
+minishell $> kh : No such file or directory
+hshsh
+open: No such file or directory
+
+
+minishell $> exit -9223372036854775808 ///////////////////////
+exit
+exit: numeric argument required
+
+
+
+
+
+  leaks fd pipe()
+  while true;  do  lsof -p 92928; sleep 1; clear ;done
+
+
+mdkir -p 1/2/3; cd into it ;remove it ; run minishell from the deleted directory; 
+
+
+cd no_file ---> this  >>>  minishell: cd: HOME not set or invalid path
+
+exit 1 | exit 2 | exit 6;

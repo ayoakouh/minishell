@@ -5,31 +5,19 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/25 20:41:00 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/05/01 20:19:54 by ayoakouh         ###   ########.fr       */
+/*   Created: 2025/05/07 12:07:21 by ayoakouh          #+#    #+#             */
+/*   Updated: 2025/05/30 16:53:18 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// int ft_check_rederction(t_redir *cmd)
-// {
-//     t_redir *tmp;
 
-//     tmp = cmd;
-//     // while(tmp)
-//     // {
-//         if(tmp->redirs != NULL)
-//         {
-//             ft_redircte(&cmd);
-//             return (0);
-//         }
-//         // tmp = tmp->next;
-//     // }
-//     return (1);
-// }
+int global_sig = 0;
 int is_builtin(char **args)
 {
+	if(!args || !*args)
+		return (1);
 	if (strcmp(args[0], "cd") == 0)
 		return (0);
 	else if (strcmp(args[0], "echo") == 0)
@@ -47,132 +35,362 @@ int is_builtin(char **args)
 		else
 			return (1);
 }
-// void minishell_cmd(char *env[])
+// int get_or_set(int type, int status)
 // {
-// 	pid_t pid = fork();
-// 		if (pid == 0)
-// 		{
-// 			char *args[] = {"./minishell", NULL};
-// 			execve("./minishell", args, env);
-// 		}
-// 		else
-// 		{
-// 			waitpid(pid, NULL, 0);
-// 		}
+// 	static int exit_status = 0;
+
+// 	if (type == SET)
+// 		exit_status = status; // rje3 dkre hadik kifch dkhlha m3a exit_status;
+// 	return (exit_status); // always return the current value
 // }
 void excute_builting(t_cmd **command, t_env *env_list, char *env[])
 {
-	t_cmd *cmd;
+	t_cmd	*cmd;
+	int		status;
 
 	cmd = *command;
+	status = 0;
 
 	if (strncmp("export", cmd->args[0], 6) == 0 && strlen(cmd->args[0]) == 6)
-		ft_export(cmd->args, &env_list);
+		status = ft_export(cmd->args, &env_list);
 	else if (strncmp("env", cmd->args[0], 3) == 0 && strlen(cmd->args[0]) == 3)
-		ft_env(env_list, env);
+		status = ft_env(*command, env_list);
 	else if (strncmp("exit", cmd->args[0], 4) == 0 && strlen(cmd->args[0]) == 4)
 	{
-		ft_exit(cmd->args);
-		free_cmd_list(cmd);
-
+		status = ft_exit(cmd->args, cmd->data);
+		// free_cmd_list(cmd);
 	}
 	else if (strncmp("unset", cmd->args[0], 5) == 0 && strlen(cmd->args[0]) == 5)
-		ft_unset(&env_list, cmd->args + 1);
+	{
+		status = ft_unset(&env_list, cmd->args + 1);
+	}
 	else if (strncmp("echo", cmd->args[0], 4) == 0 && strlen(cmd->args[0]) == 4)
-		echo(cmd->args);
+		status = echo(cmd->args);
 	else if (strncmp("pwd", cmd->args[0], 3) == 0 && strlen(cmd->args[0]) == 3)
-		pwd();
+	{
+		status = pwd(cmd->data);
+	}
 	else if (strncmp("cd", cmd->args[0], 2) == 0 && strlen(cmd->args[0]) == 2)
-		ft_cd(cmd->args, &env_list);   
+		status = ft_cd(cmd->args, &env_list, cmd->data);
+	cmd->data.exit_status = get_or_set(SET, status);
 }
-void check_line(t_cmd **command, t_env *env, char *en[])
+void execute_single_command(t_cmd *cmd, t_env *list_env, char *env[])
 {
-	 t_cmd *cmd;
-	  cmd = *command;
-	  int fd_input = 0;
-	  int fd_output = 0;
-		fd_input = dup(0);
-		fd_output = dup(1);  
-		if (cmd->pipe_out == 1)
+		if(!is_builtin(cmd->args))
 		{
-			ft_excute_mult_pipe(cmd, env, en);
+			cmd->data.new_pwd = get_value_env("PWD", &list_env);
+			excute_builting(&cmd, list_env, env);
+			get_or_set(SET, cmd->data.exit_status);
 		}
+		else
+		{
+			ft_excute_commands(cmd, &list_env);
+			get_or_set(SET, cmd->data.exit_status);
+		}
+}
+void handel_signal(int sig)
+{
+	struct termios infos;
+
+	tcgetattr(1, &infos);
+	infos.c_lflag &= ~(ECHOCTL);
+	tcsetattr(1, TCSANOW, &infos);
+	if (sig == SIGINT)
+	{
+		global_sig = 2;
+		ft_putstr_fd("\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+	else 
+		global_sig = sig;
+}
+void check_line(t_cmd **command, t_env *env_list, char *env[])
+{
+	t_cmd	*cmd;
+	cmd = *command;
+	int fd_input ;
+	int fd_output ;
+
+	if ((*command)->redirs != NULL)
+		check_here_doc(*command, env_list);
+    fd_input = dup(0);
+	fd_output = dup(1);
+	if (cmd->pipe_out)
+	{
+		dup2(fd_input, 0);
+		dup2(fd_output, 1);
+		close(fd_input);
+		close(fd_output);
+		ft_excute_mult_pipe(cmd, env_list, env);
+		get_or_set(SET, cmd->data.exit_status);
+		return ;
+	}
 	else
 	{
-	  while(cmd)
-	  {
-			if(cmd->redirs != NULL)
+		if(cmd->redirs)
+		{
+			if(cmd->redirs->fd == -1)
 			{
-				ft_redircte(cmd->redirs);
+					dup2(fd_input, 0);
+					dup2(fd_output, 1);
+					close(fd_input);
+					close(fd_output);
+					cmd->data.exit_status = get_or_set(SET, 1);
+					return ;
 			}
-			if(!is_builtin(cmd->args))
-			{
-				excute_builting(&cmd, env, en);
-			}
-			else
-			{
-				ft_excute_commands(cmd->args, &env);
-			}
-			cmd = cmd->next;
+			ft_redircte(cmd->redirs, env_list, *command);
+			execute_single_command(cmd, env_list, env);
 		}
+		else
+			execute_single_command(cmd, env_list, env);
 	}
-			dup2(fd_input, 0);
-			dup2(fd_output, 1);
-			close(fd_input);
-			close(fd_output);
+	dup2(fd_input, 0);
+	dup2(fd_output, 1);
+	close(fd_input);
+	close(fd_output);
 }
-void ff()
+
+
+
+void add_one_shlvl(t_env *env)
 {
-	system("leaks minishell");
+    t_env *tmp = env;
+    int shl_vl = 0;
+    int found = 0;
+
+    if (!env) 
+        return;
+    while (tmp) 
+    {
+        if (tmp->key && strcmp(tmp->key, "SHLVL") == 0)
+        {
+            found = 1;  // Mark that we found SHLVL
+            if (tmp->value && tmp->value[0] != '\0')
+            {
+                shl_vl = atoi(tmp->value);
+                free(tmp->value);
+                tmp->value = NULL;
+            }
+            
+            shl_vl++; 
+            tmp->value = ft_itoa(shl_vl);
+            if (!tmp->value) 
+                tmp->value = strdup("1");
+            break;
+        }
+        tmp = tmp->next;
+    }
+    if (!found && env)
+    {
+        t_env *new_node = malloc(sizeof(t_env));
+        if (!new_node)
+            return;
+            
+        new_node->key = strdup("SHLVL");
+        new_node->value = strdup("1");
+        new_node->is_not_active = 0;
+        new_node->next = NULL;
+        tmp = env;
+        while (tmp->next)
+            tmp = tmp->next;
+        tmp->next = new_node;
+    }
 }
+
+void check_here_doc(t_cmd *cmd, t_env *env)
+{
+	 /* 0:<, 1:>, 2:>>, 3:<< */
+	t_cmd *tmp;
+	t_redir *tmp_redir;
+	tmp_redir = NULL;
+	tmp = cmd;
+	int *fd;
+	while (tmp)
+	{
+		tmp_redir = tmp->redirs;
+		while (tmp_redir)
+		{
+			if (tmp_redir->type == 3)
+				{
+					fd = heredoc(tmp_redir->file, env, 0, tmp_redir->orig_token);
+					// printf("%d\n", fd[1]);
+					if (fd != NULL)
+                	{
+                    	tmp_redir->fd = fd[1];
+                    	close(fd[0]);
+                	}
+                	else
+                	{
+                    tmp_redir->fd = -1;
+                }
+				}
+			tmp_redir = tmp_redir->next;
+		}
+		
+		tmp = tmp->next;
+	}
+}
+void check_sig(t_cmd *cmd)
+{
+	if(global_sig != 0)
+	{
+		if (global_sig == 2)
+		{
+			global_sig = 1;
+		}
+		else
+		{
+			global_sig = 0;
+		}
+		cmd->data.exit_status = get_or_set(SET, global_sig);
+	}
+}
+
+
 int main(int argc, char *argv[], char *env[])
 {
-	// atexit(ff);
+	struct termios infos;
 	t_token *token_list;
-	t_env *env_struct = NULL;   //// add to the final main
-	int exit_status = 0;
+	t_env *env_struct = NULL;
 	char *input;
-	t_cmd *cmd;
-	
+	t_cmd *cmd = NULL;
+	char *preprocessed_input;
+
+	token_list = NULL;
 	(void)argc;
 	(void)argv;
-
 	env_struct = env_maker(env, &env_struct);
-	token_list = NULL;
+	if (!env_struct)
+		env_null(&env_struct);
+	if(!isatty(1))
+	{
+		exit(1);
+	}
+	tcgetattr(1, &infos);
 	while (1)
 	{
+		infos.c_lflag &= ~(ECHOCTL);
+		tcsetattr(1, TCSANOW, &infos);
+		signal(SIGINT, handel_signal);
+		signal(SIGQUIT, SIG_IGN);
 		input = readline("minishell $> ");
 		if (!input)
-			break;
-		add_history(input);
-		if (check_quotes(input))
 		{
-			// Error message already printed by check_quotes
+			printf("exit");
+			break ;
+		}
+		if (global_sig == 2 && input[0] == '\0')
+		{
+			global_sig = 0;
 			free(input);
 			continue;
 		}
-		token_list = tokin_list_maker(input);
-		if (token_list && !error_pipi(token_list)  && !check_syntax_errors(token_list))
+		add_history(input);
+
+		if (check_quotes(input))
 		{
-			// printf("--- TOKENS ---\n");
-			expand_handle(token_list, env_struct, exit_status);
-			//process_quotes_for_tokens(token_list, 1);
+			free(input);
+			continue;
+		}
+
+		preprocessed_input = preprocess_command(input); 
+		if (!preprocessed_input)
+		{
+			free(input);
+			continue;
+		}
+
+		token_list = tokin_list_maker(preprocessed_input);
+		if (token_list && !error_pipi(token_list) && !check_syntax_errors(token_list))
+		{
 			cmd = parser(token_list);
-			// ft_excute(cmd);
+			check_sig(cmd);
+			expand_handle(cmd, env_struct, get_or_set(GET, 0));
+			ambiguous_finder(cmd);
+			process_quotes_for_cmd(cmd, 1);
+			file_opener(cmd, env_struct);
 			check_line(&cmd, env_struct, env);
-			//debug_print_cmd(cmd);
-			if (cmd == NULL) {
-				printf("Warning: Command list is empty after parsing!\n");
-			} else {
-				// process_quotes_for_cmd(cmd, 1);
-				// print_cmd(cmd);
-				if (cmd)
-					free_cmd_list(cmd);
-			}
-		}   
-		free_token_list(token_list);
+			expand_handle(cmd, env_struct, cmd->data.exit_status);
+			global_sig = 0;
+		}
 		free(input);
+		free_token_list(token_list);
 	}
+	tcsetattr(1, TCSANOW, &infos);
 	free_env_struct(env_struct);
 	return 0;
 }
+
+// int main(int argc, char *argv[], char *env[])
+// {
+// 	t_token *token_list;
+// 	t_env *env_struct = NULL;
+// 	char *input;
+// 	t_cmd *cmd = NULL;
+// 	// cmd->data.exit_status = 0;
+// 	char *preprocessed_input;
+// 		struct termios infos;
+
+// 	(void)argc;
+// 	(void)argv;
+// 		puts("kkk");
+// 	// if(!isatty(1))
+// 	// {
+// 	// 	exit(1);
+// 	// }
+// 	env_struct = env_maker(env, &env_struct);
+// 	if(!env_struct)
+// 		env_null(&env_struct);
+// 	token_list = NULL;
+// 	// tcgetattr(1, &infos);
+// 		// infos.c_lflag &= ~(ECHOCTL);
+// 		signal(SIGINT, handel_signal);
+// 		signal(SIGQUIT, SIG_IGN);
+// 	while (1)
+// 	{
+// 		input = readline("minishell $> ");
+// 		if (!input)
+// 		{
+// 			printf("exit\n");
+// 			break ;
+// 		}
+// 		printf("%d\n", global_sig);
+// 		if(global_sig != 0)
+// 		{
+// 			free(input);
+// 			continue;
+// 		}
+// 		add_history(input);
+// 		if (check_quotes(input))
+// 		{
+// 			free(input);
+// 			continue;
+// 		}
+// 		preprocessed_input = preprocess_command(input); 
+//          if (!preprocessed_input)
+//             continue;
+// 		token_list = tokin_list_maker(preprocessed_input);
+// 		if (token_list && !error_pipi(token_list)  && !check_syntax_errors(token_list))
+// 		{
+// 			cmd = parser(token_list);
+// 			expand_handle(cmd, env_struct, get_or_set(GET, 0));
+// 			ambiguous_finder(cmd);
+// 			process_quotes_for_cmd(cmd, 1);
+// 			file_opener(cmd, env_struct);
+// 			// print_cmd(cmd);
+// 			check_line(&cmd, env_struct, env);
+// 			check_sig(cmd);
+// 			expand_handle(cmd, env_struct, cmd->data.exit_status);
+// 			// free_cmd_list(cmd);
+// 			global_sig = 0;
+// 			free(input);
+// 		}
+// 		// free_cmd_list(cmd);
+// 		free_token_list(token_list);
+// 	}
+// 		// tcsetattr(1, TCSANOW, &infos);
+// 	free_env_struct(env_struct);
+// 	return 0;
+// }

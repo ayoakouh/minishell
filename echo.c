@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 12:33:13 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/04/13 11:09:29 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/05/29 17:57:57 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ void	ft_putstr_fd(char *s, int fd)
 	i = 0;
 	if (!s)
 		return ;
-	while (s[i])
-	{
-		write(fd, &s[i], 1);
-		i++;
-	}
+	// while (s[i])
+	// {
+		write(fd, s, ft_strlen(s));
+		// i++;
+	// }
 }
 
 int handel_echo_n(char *str)
@@ -42,10 +42,13 @@ int handel_echo_n(char *str)
     return (0);  // Print newline
 }
 
-void echo(char **argv)
+int echo(char **argv)
 {
+    int status = 0;
     int i = 1;  
     int flag = 0;
+    int len;
+    char *helper;
 
     while (argv[i] && handel_echo_n(argv[i]) == 1)
     {
@@ -55,15 +58,16 @@ void echo(char **argv)
     
     while (argv[i])
     {
+        // helper = ft_strdup(argv[i]);
         ft_putstr_fd(argv[i], 1);
         if (argv[i + 1])
-            ft_putstr_fd(" ", 1);    
+            ft_putstr_fd(" ", 1);
         i++;
     }
     
-    // newline 
     if (flag == 0)
         ft_putstr_fd("\n", 1);
+    return (status);
 }
 // void echo(char **argv)
 // {

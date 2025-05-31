@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 18:26:45 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/04/27 11:48:15 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/05/31 13:09:20 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,13 +72,6 @@ int	ft_isdigit(int c)
 	else
 		return (0);
 }
-// size_t ft_strlen(char *str)
-// {
-//     int i = 0;
-//     while(str[i])
-//         i++;
-//     return (i);
-// }
 
 int is_numeric(char *str)
 {
@@ -94,38 +87,44 @@ int is_numeric(char *str)
     return (1);
 }
 
-void ft_exit(char **args)
+int ft_exit(char **args, t_data data)
 {
-    long n;
+    long    n;
     
+    // status = 0;
     ft_putendl_fd("exit", 1);
     
     if (!args || !args[1])
     {
+        data.exit_status = get_or_set(SET, 0);
         exit(0);
     }
     if (!is_numeric(args[1]))
     {
         ft_putendl_fd("exit: numeric argument required", 2);
+        data.exit_status = get_or_set(SET, 255);
         exit(255);
     }
     if (args[2])
     {
-        ft_putendl_fd("exit: too many arguments", 2);
-        return;
+        ft_putendl_fd("minishell: too many arguments", 2);
+        data.exit_status = get_or_set(SET, 1);
+        return 0;
     }
     n = ft_atoi(args[1]);
-    if (n == LONG_MAX && ft_strcmp(args[1], "9223372036854775807") != 0)
+    if ((n == LONG_MAX && ft_strcmp(args[1], "9223372036854775807") != 0) || (n == LONG_MAX && ft_strcmp(args[1], "-9223372036854775808") != 0))
     {
-        ft_putendl_fd("exit: numeric argument required", 2);
+        ft_putendl_fd("exit: numeric argument required...", 2);
+        data.exit_status = get_or_set(SET, 255);
         exit(255);
     }
     if(n < 0)
         n = n % 256 + 256;
     else 
         n = n % 256;
-    printf("%ld\n", n);
-    exit((int)n);
+    data.exit_status = get_or_set(SET, (int)n);
+    return(data.exit_status);
+    exit(data.exit_status);
 }
 
 

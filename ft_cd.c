@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 14:05:15 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/04/26 10:56:33 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/05/26 18:01:45 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void updat_env(t_env **env_list, char *key, char *value)
 		{
 			free(tmp->value);
 			tmp->value = strdup(value);
-			tmp->operation = 0;
+			tmp->is_not_active = 0;
 			return;
 		}
 		tmp = tmp->next;
@@ -109,7 +109,7 @@ void updat_env(t_env **env_list, char *key, char *value)
 		return;
 	new_node->key = strdup(key);
 	new_node->value = strdup(value);
-	new_node->operation = 0;
+	new_node->is_not_active = 0;
 	new_node->next = NULL;
 	ft_lstadd_back(env_list, new_node);
 }
@@ -121,7 +121,7 @@ char *get_path(char *str, t_env **list)
 	path = NULL;
 	if(str == NULL || str[0] == '~')
 	{
-		path = get_value_env(strdup("HOME"), list); //i have smale probleme in this null;
+		path = get_value_env(strdup("HOME"), list);
 		if(!path)
 			return(NULL);
 	}
@@ -131,89 +131,85 @@ char *get_path(char *str, t_env **list)
 	}
 	return (path);
 }
-
-void ft_cd(char **str, t_env **list)
+char *check_pwd(t_env **list, char *str, char *old_pwd)
 {
-	char *cwd;
-	char *new_cwd;
-	char *value;
+	static char *new_pwd;
+	char *tmp;
 
-	new_cwd = get_path(str[1], list);
-	value = get_value_env("PWD", list);
-	if(!new_cwd || chdir(new_cwd) == -1)
+    write(2, "minishell: cd: error retrieving current directory\n", 50);
+	if (old_pwd[ft_strlen(old_pwd) - 1] != '/')
 	{
-		perror("error");
-		return ;
+		tmp = ft_strjoin(old_pwd, "/");
+		printf("%s\n", tmp);
+		if(!tmp)
+			return (NULL);
+		new_pwd = ft_strjoin(tmp, str);
+		free(tmp);
 	}
-	updat_env(list, "OLDPWD", value);
-	// set_value_env(list, "OLDPWD", get_value_env("PWD", list));
-	cwd = getcwd(NULL, 0);
-	set_value_env(list, "PWD", cwd);
-	free(cwd);
+	else
+	{
+		new_pwd = ft_strjoin(old_pwd, str);
+		if(!new_pwd)
+			return (NULL);
+	}
+	updat_env(list, "PWD", new_pwd);
+	return (new_pwd);
+}
+int ft_cd(char **str, t_env **list, t_data data)
+{
+    char *cwd;
+    char *new_cwd;
+    char *value;
+	char *new_pwd;
+
+    new_cwd = get_path(str[1], list);
+    value = get_value_env("PWD", list);
+    if (!new_cwd || chdir(new_cwd) == -1)
+    {
+		// ft_putstr_fd("minishell: ", 2);
+		strerror(errno);
+		return(1);
+    }
+    if (value)
+        updat_env(list, "OLDPWD", value);
+
+    cwd = getcwd(NULL, 0);
+    if (!cwd)
+	{
+		new_pwd = check_pwd(list, str[1], value);
+		data.new_pwd = new_pwd;
+	}
+    else
+    {
+        set_value_env(list, "PWD", cwd);
+        free(cwd);
+    }
+    return (0);
 }
 
-
-
-// int main(int ac, char **av)
+// int	ft_cd(char **str, t_env **list)
 // {
-// 	t_env *head;
-// 	t_env *node1;
-// 	t_env *node2;
-// 	t_env *node3;
-	
-// 	node1 = malloc(sizeof(t_env));
-// 	node2 = malloc(sizeof(t_env));
-// 	node3 = malloc(sizeof(t_env));
+// 	char	*cwd;
+// 	char	*new_cwd;
+// 	char	*value;
+// 	static new_pwd;
 
-// 	node1->key = strdup("PWD");
-// 	node1->value = strdup("/ayoub/");
-// 	node2->key = strdup("HOME");
-// 	node2->value = strdup("/mnt/homes/ayoakouh");
-// 	node3->key = strdup("ali");
-// 	node3->value = strdup("333333");
-
-// 	head = node1;
-// 	node1 ->next = node2;
-// 	node2 ->next = node3;
-// 	node3 ->next = NULL;
-// 	// updat_env(head, "ali", "ayoub");
-// 	ft_cd(av[2], &head);
-// 	// cd(av);
-// 	puts("---------");
-// 	// remove_env(&head, "ali");
-// 	t_env *tmp;
-// 	tmp = head;
-// 	while(tmp)
+// 	new_cwd = get_path(str[1], list);
+// 	value = get_value_env("PWD", list); // detsktop//cccc/0/1/2;
+// 	if(!new_cwd || chdir(new_cwd) == -1)
 // 	{
-// 		printf("key is : %s\n", tmp->key);
-// 		printf("value is : %s\n", tmp->value);
-// 		tmp = tmp->next;
+// 		write(2, "minishell: cd: HOME not set\n", 28);
+// 		return (1);
 // 	}
-// 	// cd (av, head);
-// }
-// void updat_env(t_env **env_list, char *key, char *value) // this set_value_env;
-// {
-//     t_env *tmp;
-//     t_env *new_node;
-
-//     tmp = *env_list;
-//     while(tmp)
-//     {
-//         if(strcmp(key, tmp->key) == 0)
-//         {
-//             free(tmp->value);
-//             tmp->value = strdup(value);
-//             return ;
-//         }
-//         tmp = tmp->next;
-//     }
-//     new_node = malloc(sizeof(t_env));
-//     if(!new_node)
-//         return ;
-//     ft_lstadd_back(env_list, new_node);
-
-//     new_node->key = strdup(key);
-//     new_node->value = strdup(key);
-//     // new_node->next = *env_list;
-//     // *env_list = new_node;
+// 	if(value)
+// 		updat_env(list, "OLDPWD", value);
+// 	// set_value_env(list, "OLDPWD", value);
+// 	cwd = getcwd(NULL, 0);
+// 	if(!cwd)
+// 	{
+// 		check_pwd(new_pwd, cwd, value);
+// 	}
+// 	set_value_env(list, "PWD", cwd);
+// 	free(cwd);
+// 	return (0);
 // }

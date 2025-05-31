@@ -1,0 +1,42 @@
+declare -x a="ayo'ido" or declare -x b='ayo"ido'
+when write echo $a or echo $b should display 
+ayo'ido
+ayo"ido
+
+
+minishell $> >> "><"
+minishell: syntax error near unexpected token `<'
+
+
+$t l=$a k=$a j=$a
+should split
+
+
+
+minishell $> > "a b" ls
+fd_name = a b
+ and amb= 0
+-> 3 
+minishell: b ls: command not found
+
+> "A b"
+fd_name = A b
+ and amb= 0
+-> 3 
+minishell: b: command not found
+
+
+minishell $> > a
+fd_name = a
+and amb= 1
+-> 3 
+
+
+
+<<  a  
+a
+ segfault;
+
+
+
+
