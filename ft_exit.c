@@ -6,13 +6,13 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 18:26:45 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/05/31 13:09:20 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/05/31 17:42:33 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int    ft_space(const char **str, int sign)
+static int ft_space(const char **str, int sign)
 {
     while ((**str >= 9 && **str <= 13) || **str == 32)
         (*str)++;
@@ -25,28 +25,74 @@ static int    ft_space(const char **str, int sign)
     return (sign);
 }
 
-long    ft_atoi(const char *str)
+long ft_atoi(const char *str)
 {
-    int                i;
-    int                sign;
-    long            res;
-    long            tmp;
+    int     i;
+    int     sign;
+    long    res;
 
     sign = 1;
     i = 0;
     res = 0;
-    tmp = 0;
     sign = ft_space(&str, sign);
+    
     while (str[i] >= '0' && str[i] <= '9')
     {
-        res = res * 10 + (str[i] - 48);
-        if (res / 10 != tmp)
-            return (LONG_MAX);
-        tmp = res;
+        // Check for overflow before multiplication and addition
+        if (sign == 1)
+        {
+            // Check positive overflow: res > (LONG_MAX - digit) / 10
+            if (res > (LONG_MAX - (str[i] - '0')) / 10)
+                return (LONG_MAX);
+        }
+        else
+        {
+            // Check negative overflow: res > (LONG_MAX - digit) / 10
+            // We use LONG_MAX here because we'll negate later
+            if (res > (LONG_MAX - (str[i] - '0')) / 10)
+                return (LONG_MIN);
+        }
+        
+        res = res * 10 + (str[i] - '0');
         i++;
     }
     return (res * sign);
 }
+// static int    ft_space(const char **str, int sign)
+// {
+//     while ((**str >= 9 && **str <= 13) || **str == 32)
+//         (*str)++;
+//     if (**str == '-' || **str == '+')
+//     {
+//         if (**str == '-')
+//             sign *= -1;
+//         (*str)++;
+//     }
+//     return (sign);
+// }
+
+// long    ft_atoi(const char *str)
+// {
+//     int                i;
+//     int                sign;
+//     long            res;
+//     long            tmp;
+
+//     sign = 1;
+//     i = 0;
+//     res = 0;
+//     tmp = 0;
+//     sign = ft_space(&str, sign);
+//     while (str[i] >= '0' && str[i] <= '9')
+//     {
+//         res = res * 10 + (str[i] - 48);
+//         if (res / 10 != tmp)
+//             return (LONG_MAX);
+//         tmp = res;
+//         i++;
+//     }
+//     return (res * sign);
+// }
 
 void	 ft_putendl_fd(char	*s, int fd)
 {
@@ -112,7 +158,7 @@ int ft_exit(char **args, t_data data)
         return 0;
     }
     n = ft_atoi(args[1]);
-    if ((n == LONG_MAX && ft_strcmp(args[1], "9223372036854775807") != 0) || (n == LONG_MAX && ft_strcmp(args[1], "-9223372036854775808") != 0))
+    if ((n == LONG_MAX && ft_strcmp(args[1], "9223372036854775807") != 0) || (n == LONG_MIN && ft_strcmp(args[1] , "-9223372036854775808") != 0))
     {
         ft_putendl_fd("exit: numeric argument required...", 2);
         data.exit_status = get_or_set(SET, 255);
@@ -122,8 +168,8 @@ int ft_exit(char **args, t_data data)
         n = n % 256 + 256;
     else 
         n = n % 256;
+    printf("%d\n", (int)n); // kaykherj be 256 chof mnin katjih 0 fe exit_status; && chaech over_flow atoi;
     data.exit_status = get_or_set(SET, (int)n);
-    return(data.exit_status);
     exit(data.exit_status);
 }
 

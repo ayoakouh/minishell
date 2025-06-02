@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:59:21 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/05/30 21:00:31 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/06/01 16:22:21 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void ft_redircte(t_redir *rederction, t_env *env, t_cmd *cmd)
         }
         else if (tmp->type == 1) 
         {
-            printf("-> %d \n", tmp->fd);
+            // printf("-> %d \n", tmp->fd);
             dup2(tmp->fd, 1);
             close(tmp->fd);
         }

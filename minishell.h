@@ -183,7 +183,6 @@ char	*ft_strchr(char *s, int c);
 char	**ft_split(char const *s, char c);
 char	*ft_strjoin(char const *s1, char const *s2);
 void	ft_lstadd_back(t_env **lst, t_env *new);
-// char	*ft_substr(char *s, unsigned int start, size_t len);
 char    *ft_substr(char const *s, unsigned int start, size_t len);
 // void apply_word_splitting(t_cmd *cmd_list);
 // int expand_fill_str(t_exp_helper *expand, char *str);
@@ -215,7 +214,6 @@ int *heredoc(char *delmeter, t_env *env, int exit_status, char *orig_delimiter);
 
 int get_or_set(int type, int status); // for intialize or get exit status;
 void wait_for_children(t_cmd *cmd, pid_t child_pid);
-//for teste ;
 void intialize_struct(t_redir *list);
 void ft_redircte(t_redir *rederction, t_env *env, t_cmd *cmd);
 
@@ -249,103 +247,5 @@ void ft_excute_mult_pipe(t_cmd *cmd, t_env *list_env, char *env[]);
 t_env *creat_new_env(char *key, char *value, int for_path);
 void ft(char **args, t_env **list);
 void handel_signal(int sig);
-// void	remove_quotes_from_tokens(t_token *token_list);
-// char	*remove_quotes(char *str);
 
-
-// char *expand_token_data(char *original, t_env *env, int exit_status);
-
-
-
-// int get_num_length(long num);
-// void fill_num_string(char *str, long num, int len);
-// char *ft_itoa(int n);
-// int	ft_isalnum(int c);
-// int is_valid_var_char(char c);
-// int expand_handle_helper0(t_exp_helper *expand);
-// int  expand_handle_helper1(t_exp_helper *expand, int exit_status , t_env *env);
-// int expand_fill(t_exp_helper *expand, t_token *tmp);
-// void process_token(t_token *tmp, t_exp_helper *expand, t_env *env, int exit_status);
-// // void expand_handle(t_token *token_list, t_env *env, int exit_status);
-// char *lookup_variable(char *var_name, t_env *env_struct);
-
-
-
-// int handle_quotes(char c, int *quote_state);
-// int special_character_cheker_with_quotes(char character, int quote_state);
-// char *selective_remove_quotes(char *str, int remove_mode);
-// //void process_quotes_for_tokens(t_token *token_list, int remove_mode);
-// int	helper3(t_exp_helper *expand, int exit_status);
-// int	expand_handle_helper1(t_exp_helper *expand, int exit_status, t_env *env);
-// void	process_token(t_token *tmp, t_exp_helper *expand,
-//     t_env *env, int exit_status);
-// char	*ft_itoa(int n);
-// int	is_valid_var_char(char c);
-// int	expand_fill(t_exp_helper *expand, t_token *tmp);
-// // char	*lookup_variable(char *var_name, t_env *env_struct);
-    
-//     t_cmd *parser(t_token *token_list);
-//     int is_redirection(char *str, int i);
-//     char **ft_split_q(char const *s, char c);
-//     void process_quotes_for_cmd(t_cmd *cmd_list, int remove_mode);
-    
-    
-    
-// //add back func
-// void	add_cmd_back(t_cmd **lst, t_cmd *new);
-// void	add_redir_back(t_redir **lst, t_redir *new);
-// void	ft_lstadd_back_env(t_env **lst, t_env *new);
-// void	ft_lstadd_back_token(t_token **lst, t_token *new);
-    
-// ///free func
-// char	**free_split(char **split, size_t j);
-// void free_env_struct(t_env *env_struct);
-// void free_token_list(t_token *token_list);
-// //void free_string_array(char **array, int count);
-// void free_cmd_list(t_cmd *cmd_list);
-// void free_split_str(char **split_str);
-// char **free_split_q(char **split, size_t j);
-
-// ///debugging tools
-// void print_cmd(t_cmd *cmd_list);
-// void	print_tokens(t_token *token_list);  ///// remove if the parsing finish
-// void print_env(t_env *env_struct); // remove after the parsing finish
-
-// void process_redir_helper(char str, int *quote_state);    
-// char *redir_extracter(char *str);
-
-// char	*ft_strjoin(char const *s1, char const *s2);
-// t_redir *creat_redir_list(char *str);
-// t_redir *creat_redir_list_helper0(char *str1, char *str2);
-// int creat_redir_list_helper(char *str);
-// static char *process_redir(char *str, int *pos);
-// t_redir *creat_redir_node(int type, char *file);
-
-
-
-// int	expand_fill_str(t_exp_helper *expand, char *str);
-// void print_ambiguous_redir_errors(t_cmd *cmd);
-// void ambiguous_finder(t_cmd *cmd);
-
-// void	process_string(char *str, t_exp_helper *expand,
-// 					t_env *env, int exit_status);
-
-
-// int open_file(int type, char *file);
-// void file_opener(t_cmd *cmd);
-
-
-// char **split_if_needed(char *str);
-// void free_string_array(char **array);
-// int is_valid_var_char(char c);
-// int is_in_assignment(char *str, int pos);
-// char	*lookup_variable(char *var_name, t_env *env_struct);
-// int is_special_export_case(t_cmd *cmd);
-// void split_args_for_cmd(t_cmd *cmd_list);
-// void apply_word_splitting(t_cmd *cmd_list);
-// void print_file_error(char *file, int i);
-#endif
-    
-    
-    
-     
+void desable_echo_term();

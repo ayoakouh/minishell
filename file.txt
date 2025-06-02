@@ -1,3 +1,10 @@
+cat > /dev/null
+
+ctrl+c;
+
+
+
+
 
 ayoakouh@e3r9p3 ft_clone % env -i ./minishell
 minishell $> unset PATH;;

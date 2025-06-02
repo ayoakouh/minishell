@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 15:22:58 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/05/30 18:30:46 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/06/02 15:08:05 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,7 @@ void ft_excute_mult_pipe(t_cmd *cmd, t_env *list_env, char *env[])
     head = cmd;
 
     signal(SIGINT, SIG_IGN);
-    signal(SIGQUIT, SIG_IGN);
+    // signal(SIGQUIT, SIG_IGN);
 
     pipe_all(cmd);
      
@@ -181,7 +181,7 @@ void ft_excute_mult_pipe(t_cmd *cmd, t_env *list_env, char *env[])
         else if (pid == 0)
         {
             signal(SIGINT, SIG_DFL);
-            signal(SIGQUIT, handl_si);
+            signal(SIGQUIT, SIG_DFL);
             if (prev && prev->pipe_out)
             {
                 dup2(prev->fd_pipe[0], 0);
@@ -203,7 +203,6 @@ void ft_excute_mult_pipe(t_cmd *cmd, t_env *list_env, char *env[])
         if(cmd->next == NULL)
             last_pid = pid;
 
-        // Parent closes previous pipe ends
         if (prev && prev->pipe_out)
         {
             close(prev->fd_pipe[0]);
@@ -213,8 +212,18 @@ void ft_excute_mult_pipe(t_cmd *cmd, t_env *list_env, char *env[])
         cmd = cmd->next;
     }
     close_all_pipes(head);
-    	while ((pid = wait(&status)) > 0)
+    // wait_for_children(cmd, pid);
+    while ((pid = wait(&status)) > 0)
 	{
+        if (WIFSIGNALED(status))
+        {
+            int sig = WTERMSIG(status);
+            printf("%d\n", sig);
+            if (sig == SIGQUIT)
+                ft_putstr_fd("Quit: 3\n", 1);
+            else if (sig == SIGINT)
+                ft_putstr_fd("\n", 1);
+        }
 		if (pid == last_pid)
 		{
 			if (WIFEXITED(status))
@@ -222,10 +231,10 @@ void ft_excute_mult_pipe(t_cmd *cmd, t_env *list_env, char *env[])
 			else if (WIFSIGNALED(status))
 			{
 				int sig = WTERMSIG(status);
-				if (sig == SIGQUIT)
-					ft_putstr_fd("Quit: 3\n", 1);
-				else if (sig == SIGINT)
-					ft_putstr_fd("\n", 1);
+				// if (sig == SIGQUIT)
+				// 	ft_putstr_fd("Quit: 3\n", 1);
+				// else if (sig == SIGINT)
+				// 	ft_putstr_fd("\n", 1);
 				last_status = 128 + sig;
 			}
             head->data.exit_status = get_or_set(SET, last_status);

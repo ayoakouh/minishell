@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 16:33:44 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/05/29 16:41:18 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/06/02 15:27:22 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,17 @@ void wait_for_children(t_cmd *cmd, pid_t child_pid)
         {
             int sig = WTERMSIG(status);
             if (sig == SIGQUIT)
+            {
                 ft_putstr_fd("Quit: 3\n", 1);
+                cmd->data.exit_status = get_or_set(SET, 128 + sig);
+            }
             else if (sig == SIGINT)
+            {
                 ft_putstr_fd("\n", 1);
-            cmd->data.exit_status = get_or_set(SET, 128 + sig);
-            // printf("{{{%d\n", cmd->data.exit_status);
+                cmd->data.exit_status = get_or_set(SET, 128 + sig);
+            }
+            else
+                cmd->data.exit_status = get_or_set(SET, 0);
         }
 }
 void check_is_deroctory(t_cmd *cmd)
@@ -102,7 +108,6 @@ void check_is_deroctory(t_cmd *cmd)
 }
 void ft_print_error(t_cmd *cmd)
 {
-    // check_is_deroctory(cmd);
     ft_putstr_fd("minishell: ", 2);
     write(2, cmd->args[0], ft_strlen(cmd->args[0]));
     if(errno == 2)
@@ -136,6 +141,7 @@ void handle_absolute_path(t_cmd *cmd, char **help)
         {
             execve(cmd->args[0], cmd->args, help);
             cmd->data.exit_status = get_or_set(SET, 0);
+            exit(0);
         }
         else
         {
@@ -191,6 +197,13 @@ void restart_setting_term()
     term.c_lflag |= ECHOCTL;
     tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
+void desable_echo_term()
+{
+    struct termios term;
+    tcgetattr(1, &term);
+	term.c_lflag &= ~(ECHOCTL);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
 void ft_excute_commands(t_cmd *cmd, t_env **env_list)
 {
     char **env_doble;
@@ -201,9 +214,7 @@ void ft_excute_commands(t_cmd *cmd, t_env **env_list)
     struct termios infos;
     struct termios term;
 
-    tcgetattr(1, &infos);
-	infos.c_lflag &= ~(ECHOCTL);
-    env_doble = convert_env_list(env_list); 
+    env_doble = convert_env_list(env_list);
     if(!cmd->args || !cmd->args[0])
         return ;
     if(ft_strchr(cmd->args[0], '/'))

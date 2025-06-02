@@ -1,6 +1,6 @@
 
 CC = gcc
-CFLAGS = -Wall -g -fsanitize=address
+CFLAGS = -Wall# -g -fsanitize=address
 
 # Target executable name
 NAME = minishell

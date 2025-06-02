@@ -65,7 +65,9 @@ typedef struct s_redir
 
 typedef struct s_cmd
 {
-    char *cmd;            /* Command name */
+    int     flag;
+    int     fd[2];
+    char *cmd;         /* Command name */
     char **args;         /* Command args (including cmd as args[0]) */
     t_redir *redirs;      /* Redirections list */
     t_data    data;
