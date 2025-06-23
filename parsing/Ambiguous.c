@@ -1,68 +1,70 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Ambiguous.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/04 10:15:39 by anel-men          #+#    #+#             */
+/*   Updated: 2025/06/16 15:36:48 by anel-men         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parsing.h"
 
-//A variable used as the redirection target is empty or unset
-//A variable expands to multiple words (creating confusion about which one is the target)
-
-int check_for_space(char *str)
+void	ambiguous_checker_helper(t_redir *tmp)
 {
-    int i = 0;
+	char	*tp;
 
-    while (str && str[i] && str[i] != ' ') 
-        i++;
-
-    if (i > 0)
-        return 1; 
-    return 0;
-
-}
-char *trim_space(char *str)
-{
-    int i = 0;
-
-    while (str && str[i] && str[i] == ' ')
-        i++;
-    int start = i;
-    while (str && str[i] && str[i] != ' ')
-        i++;
-    int end = i;
-    char *trim_str = ft_substr(str, start, end - start);
-
-    return trim_str;
+	tp = tmp->file;
+	tmp->file = ft_strtrim(tmp->file, " ");
+	free(tp);
 }
 
-void ambiguous_checker(t_redir *redir)
+void	ambiguous_hp(t_redir *tmp)
 {
-    t_redir *tmp;
-
-    tmp = redir;
-    while (tmp)
-    {
-        if ((tmp->orig_token[0] == '\'' || tmp->orig_token[0] == '\"')
-            && (tmp->orig_token[ft_strlen(tmp->orig_token) - 1] == '\''
-            || tmp->orig_token[ft_strlen(tmp->orig_token) - 1] == '\"'))
-            {
-            tmp = tmp->next;
-            continue;
-            }
-        if (!tmp->file || tmp->file[0] == '\0')
-            tmp->Ambiguous = 1;
-        else if (tmp->file && check_for_space(tmp->file) == 1) 
-            tmp->Ambiguous = 1;
-        else
-            tmp->file = ft_strtrim(tmp->file, " ");
-        tmp = tmp->next;
-    }
+	if (!tmp->file || tmp->file[0] == '\0')
+		tmp->ambiguous = 1;
+	else if (tmp->file && check_for_space(tmp->file) == 1
+		&& tmp->orig_token[0] == '$')
+		tmp->ambiguous = 1;
+	else
+		ambiguous_checker_helper(tmp);
 }
 
-
-void ambiguous_finder(t_cmd *cmd)
+void	ambiguous_checker(t_redir *redir)
 {
-    t_cmd *tmp;
+	t_redir	*tmp;
 
-    tmp = cmd;
-    while(tmp)
-    {
-        ambiguous_checker(tmp->redirs);
-        tmp = tmp->next;
-    }
+	tmp = redir;
+	while (tmp)
+	{
+		if (tmp->type != 3 && tmp->orig_token[0] == '$')
+		{
+			if ((tmp->orig_token[0] == '\'' && tmp->orig_token[1] == '\'')
+				|| (tmp->orig_token[0] == '\"' && tmp->orig_token[1] == '\"'))
+				tmp->ambiguous = 1;
+			if ((tmp->orig_token[0] == '\'' || tmp->orig_token[0] == '\"')
+				&& (tmp->orig_token[ft_strlen(tmp->orig_token) - 1] == '\''
+					|| tmp->orig_token[ft_strlen(tmp->orig_token) - 1] == '\"'))
+			{
+				tmp = tmp->next;
+				continue ;
+			}
+			ambiguous_hp(tmp);
+		}
+		tmp = tmp->next;
+	}
+}
+
+void	ambiguous_finder(t_cmd *cmd)
+{
+	t_cmd	*tmp;
+
+	tmp = cmd;
+	while (tmp)
+	{
+		ambiguous_checker(tmp->redirs);
+		tmp = tmp->next;
+	}
 }

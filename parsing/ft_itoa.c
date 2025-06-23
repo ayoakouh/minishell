@@ -1,59 +1,70 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_itoa.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/15 15:03:24 by anel-men          #+#    #+#             */
+/*   Updated: 2025/06/21 11:01:19 by anel-men         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parsing.h"
 
-int	get_num_length(long num)
+int	size(long n)
 {
-	int	length;
+	int	count;
 
-	length = 0;
-	if (num == 0)
-		return (1);
-	if (num < 0)
+	count = 0;
+	if (n == 0)
+		count++;
+	if (n < 0)
 	{
-		num = num * -1;
-		length++;
+		n *= (-1);
+		count++;
 	}
-	while (num > 0)
+	while (n > 0)
 	{
-		num = num / 10;
-		length++;
+		n = n / 10;
+		count++;
 	}
-	return (length);
+	return (count);
 }
 
-void	fill_num_string(char *str, long num, int len)
+void	itoa_hp(char *ptr)
 {
-	str[len] = '\0';
-	if (num == 0)
-		str[0] = '0';
-	else
-	{
-		if (num < 0)
-		{
-			str[0] = '-';
-			num = num * -1;
-		}
-		while (num)
-		{
-			len--;
-			str[len] = (num % 10) + '0';
-			num = num / 10;
-		}
-	}
+	ptr[0] = '0';
+	ptr[1] = '\0';
 }
 
-char	*ft_itoa(int n)
+char	*ft_itoa(int nbr)
 {
-	int		length;
-	long	num;
-	char	*result;
+	char	*ptr;
+	long	n;
+	int		i;
 
-	num = n;
-	length = get_num_length(num);
-	result = malloc(length + 1);
-	if (!result)
+	n = nbr;
+	i = size(n);
+	ptr = malloc(sizeof(char) * (i + 1));
+	if (!ptr)
 		return (NULL);
-	fill_num_string(result, num, length);
-	return (result);
+	ptr[i] = '\0';
+	i--;
+	if (n == 0)
+		itoa_hp(ptr);
+	if (n < 0)
+	{
+		ptr[0] = '-';
+		n *= (-1);
+	}
+	while (n > 0)
+	{
+		ptr[i] = n % 10 + '0';
+		n = n / 10;
+		i--;
+	}
+	return (ptr);
 }
 
 int	ft_isalnum(int c)

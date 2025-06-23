@@ -1,143 +1,105 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing_main.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/15 16:06:35 by anel-men          #+#    #+#             */
+/*   Updated: 2025/06/18 17:46:31 by anel-men         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "parsing.h"
 
-
-// Add this function to handle empty redirection targets safely
-
-int preprocess_cmd_hp_0(char *input, int *i, int *in_quotes, char *result, int *j)
+int	preprocess_cmd_hp_0(t_pre_cmd *pre_cmd, int *in_quotes)
 {
-        if (input[(*i)] == '\'' && *in_quotes != 2)
-        {
-            if (*in_quotes == 1)
-                *in_quotes = 0;
-            else
-                *in_quotes = 1;
-            result[(*j)++] = input[(*i)++];
-            return (1);
-        }
-        else if (input[(*i)] == '\"' && *in_quotes != 1)
-        {
-            if (*in_quotes == 2)
-                *in_quotes = 0; 
-            else
-                *in_quotes = 2;
-            result[(*j)++] = input[(*i)++];
-            return (1);
-        }
-        return(0);
-
+	if (pre_cmd->input[(*pre_cmd->i)] == '\'' && *in_quotes != 2)
+	{
+		if (*in_quotes == 1)
+			*in_quotes = 0;
+		else
+			*in_quotes = 1;
+		pre_cmd->result[(*pre_cmd->j)++] = pre_cmd->input[(*pre_cmd->i)++];
+		return (1);
+	}
+	else if (pre_cmd->input[(*pre_cmd->i)] == '\"' && *in_quotes != 1)
+	{
+		if (*in_quotes == 2)
+			*in_quotes = 0;
+		else
+			*in_quotes = 2;
+		pre_cmd->result[(*pre_cmd->j)++] = pre_cmd->input[(*pre_cmd->i)++];
+		return (1);
+	}
+	return (0);
 }
 
-
-void preprocess_cmd_hp_1(char *input, int *i, int *in_quotes, char *result, int *j)
+void	preprocess_cmd_hp_1(t_pre_cmd *pre_cmd, int *in_quotes)
 {
-    if (input[(*i)] == '>' || input[(*i)] == '<')
-    {
-        if ((*j) > 0 && result[(*j)-1] != ' ' && result[(*j)-1] != '>' && result[(*j)-1] != '<')
-                result[(*j)++] = ' ';
-            result[(*j)++] = input[(*i)++];
-            if (input[(*i)] == '>' || input[(*i)] == '<')
-                result[(*j)++] = input[(*i)++];
-            if (input[(*i)] && input[(*i)] != ' ')
-                result[(*j)++] = ' ';
-    }
-    else
-        result[(*j)++] = input[(*i)++];
-
+	if (pre_cmd->input[(*pre_cmd->i)] == '>'
+		|| pre_cmd->input[(*pre_cmd->i)] == '<')
+	{
+		if ((*pre_cmd->j) > 0 && pre_cmd->result[(*pre_cmd->j) - 1] != ' '
+			&& pre_cmd->result[(*pre_cmd->j) - 1] != '>'
+			&& pre_cmd->result[(*pre_cmd->j) - 1] != '<')
+			pre_cmd->result[(*pre_cmd->j)++] = ' ';
+		pre_cmd->result[(*pre_cmd->j)++] = pre_cmd->input[(*pre_cmd->i)++];
+		if (pre_cmd->input[(*pre_cmd->i)] == '>'
+			|| pre_cmd->input[(*pre_cmd->i)] == '<')
+			pre_cmd->result[(*pre_cmd->j)++] = pre_cmd->input[(*pre_cmd->i)++];
+		if (pre_cmd->input[(*pre_cmd->i)]
+			&& pre_cmd->input[(*pre_cmd->i)] != ' ')
+			pre_cmd->result[(*pre_cmd->j)++] = ' ';
+	}
+	else
+		pre_cmd->result[(*pre_cmd->j)++] = pre_cmd->input[(*pre_cmd->i)++];
 }
 
-int preprocess_cmd_hp_2(char *input, int *i, int *in_quotes, char *result, int *j)
+int	preprocess_cmd_hp_2(t_pre_cmd *pre_cmd, int *in_quotes)
 {
-    if (*in_quotes)
-    {
-        result[(*j)++] = input[(*i)++];
-        return (1);
-    }
-    return (0);
+	if (*in_quotes)
+	{
+		pre_cmd->result[(*pre_cmd->j)++] = pre_cmd->input[(*pre_cmd->i)++];
+		return (1);
+	}
+	return (0);
 }
 
-char *preprocess_command(char *input)
+char	*preprocess_command(char *input)
 {
-    int i = 0;             
-    int j = 0;             
-    int in_quotes = 0;   
-    char *result;
-    
-    if (!input)
-        return NULL;
-        
-    result = malloc(strlen(input) * 3 + 1);
-    if (!result)
-        return NULL;
-        
-    i = 0;             
-    j = 0;             
-    in_quotes = 0;    
-    while (input[i])
-    {
-        if (preprocess_cmd_hp_0(input, &i, &in_quotes, result, &j))
-            continue;
-        if (preprocess_cmd_hp_2(input, &i, &in_quotes, result, &j))
-            continue;
-        preprocess_cmd_hp_1(input, &i, &in_quotes, result, &j);
-    }
-    return (result[j] = '\0', result);
+	int			i;
+	int			j;
+	int			in_quotes;
+	char		*result;
+	t_pre_cmd	*pre_cmd;
+
+	i = 0;
+	j = 0;
+	in_quotes = 0;
+	if (!input)
+		return (NULL);
+	result = malloc(strlen(input) * 3 + 1);
+	if (!result)
+		return (NULL);
+	pre_cmd = init_precmd(input, &i, result, &j);
+	if (!pre_cmd)
+		return (free(result), NULL);
+	process_input_characters(pre_cmd, &in_quotes);
+	pre_cmd->result[*pre_cmd->j] = '\0';
+	result = pre_cmd->result;
+	free(pre_cmd);
+	return (result);
 }
 
-// int main(int argc, char *argv[], char *env[])
-// {
-//     t_token *token_list;
-//     t_env *env_struct = NULL;   //// add to the final main
-//     int exit_status;
-//     char *input;
-//     t_cmd *cmd;
-//     char *preprocessed_input;
-
-//     env_maker(env, &env_struct);
-//     token_list = NULL;
-//     while (1)
-//     {
-//         cmd = NULL;
-//         input = readline("minishell $> ");
-//         if (!input)
-//             break;
-//         add_history(input);
-//         if (check_quotes(input))
-//         {
-//             // Error message already printed by check_quotes
-//             free(input);
-//             continue;
-//         }
-//         // Preprocess input to add spaces around redirection operators
-//        preprocessed_input = preprocess_command(input); 
-//         free(input);  // Free original input
-//          if (!preprocessed_input)
-//             continue;
-//         token_list = tokin_list_maker(preprocessed_input);
-
-//         if (token_list && !error_pipi(token_list)  && !check_syntax_errors(token_list))
-//         {
-//             //expand_handle(token_list, env_struct, exit_status);
-//             printf("--- TOKENS ---\n");
-//             //process_quotes_for_tokens(token_list, 1);
-//             cmd = parser(token_list);
-
-//             expand_handle(cmd, env_struct, exit_status);
-//             //debug_print_cmd(cmd);
-//             ambiguous_finder(cmd);
-//             //print_ambiguous_redir_errors(cmd);
-//             if (cmd == NULL) {
-//                 printf("Warning: Command list is empty after parsing!\n");
-//             } else {
-//                 process_quotes_for_cmd(cmd, 1);
-//                 file_opener(cmd);
-//                 //  print_cmd(cmd);
-//             }
-
-//         }   
-//         free_token_list(token_list);
-//         free(preprocessed_input);
-//     if (cmd)
-//         free_cmd_list(cmd);
-//     }
-//     return 0;
-// }
+void	process_input_characters(t_pre_cmd *pre_cmd, int *in_quotes)
+{
+	while (pre_cmd->input[*pre_cmd->i])
+	{
+		if (preprocess_cmd_hp_0(pre_cmd, in_quotes))
+			continue ;
+		if (preprocess_cmd_hp_2(pre_cmd, in_quotes))
+			continue ;
+		preprocess_cmd_hp_1(pre_cmd, in_quotes);
+	}
+}

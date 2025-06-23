@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntx_check_helper_0.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:26:07 by anel-men          #+#    #+#             */
-/*   Updated: 2025/05/28 17:24:49 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/06/16 19:51:40 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	check_for_redirection(char *str)
 {
 	int	i;
 	int	count;
-	int len;
+	int	len;
 
 	i = 0;
 	len = 0;
@@ -66,49 +66,55 @@ void	check_missing_filename(char *str)
 	}
 }
 
-void	print_error(char *str, int *i)
+void	process_filename_characters(char *str, int *i, int *quote_state)
 {
-	if (str[(*i)] == '\0')
-		write(2, "minishell: syntax error near unexpected token `newline'\n",
-			57);
-	else if (str[(*i)] == '|')
-		write(2, "minishell: syntax error near unexpected token `|'\n",
-			51);
-	else if (str[(*i)] == '>' && str[(*i) + 1] == '>')
-		write(2, "minishell: syntax error near unexpected token `>>'\n",
-			52);
-	else if (str[(*i)] == '>')
-		write(2, "minishell: syntax error near unexpected token `>'\n",
-			51);
-	else if (str[(*i)] == '<' && str[(*i) + 1] == '<')
-		write(2, "minishell: syntax error near unexpected token `<<'\n",
-			52);
-	else if (str[(*i)] == '<')
-		write(2, "minishell: syntax error near unexpected token `<'\n",
-			51);
+	while (str[(*i)])
+	{
+		if (str[(*i)] == '\'')
+		{
+			if (*quote_state == 0)
+				*quote_state = 1;
+			else if (*quote_state == 1)
+				*quote_state = 0;
+		}
+		else if (str[(*i)] == '"')
+		{
+			if (*quote_state == 0)
+				*quote_state = 2;
+			else if (*quote_state == 2)
+				*quote_state = 0;
+		}
+		if (*quote_state == 0 && (str[(*i)] == ' '
+				|| str[(*i)] == '>' || str[(*i)] == '<'
+				|| str[(*i)] == '|'))
+			break ;
+		(*i)++;
+	}
 }
 
 int	invalid_filename_checker(char *str, int *i)
 {
 	char	operator_type;
+	int		quote_state;
 
+	quote_state = 0;
 	operator_type = str[(*i)];
 	(*i)++;
 	if (str[(*i)] == operator_type)
 		(*i)++;
 	while (str[(*i)] && str[(*i)] == ' ')
 		(*i)++;
-	if (str[(*i)] == '\0' || str[(*i)] == '>'
-		|| str[(*i)] == '<' || str[(*i)] == '|')
+	if (str[(*i)] == '\0'
+		|| (str[(*i)] == '>' && quote_state == 0)
+		|| (str[(*i)] == '<' && quote_state == 0)
+		|| (str[(*i)] == '|' && quote_state == 0))
 	{
 		print_error(str, i);
 		return (1);
 	}
 	else
 	{
-		while (str[(*i)] && str[(*i)] != ' ' && str[(*i)] != '>'
-			&& str[(*i)] != '<' && str[(*i)] != '|')
-			(*i)++;
+		process_filename_characters(str, i, &quote_state);
 	}
 	return (0);
 }

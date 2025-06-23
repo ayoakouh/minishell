@@ -6,142 +6,63 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 11:21:05 by anel-men          #+#    #+#             */
-/*   Updated: 2025/05/25 15:21:26 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/19 11:28:56 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 
-
-
-
-
-
-
-int process_quote_char(char c, int *quote_state, char *new_str, int *j, int remove_mode)
+int	selective_hp(char *str, int *i, int *quote_state)
 {
-    if (c == '\'')
-    {
-        if (*quote_state == 0)
-            *quote_state = 1;
-        else if (*quote_state == 1)
-            *quote_state = 0;
-        if (remove_mode == 0)
-            new_str[(*j)++] = c;
-        return (1);
-    }
-    else if (c == '\"')
-    {
-        if (*quote_state == 0)
-            *quote_state = 2;
-        else if (*quote_state == 2)
-            *quote_state = 0;
-        if (remove_mode == 0)
-            new_str[(*j)++] = c;
-        return (1);
-    }
-    return (0);
+	if ((str[(*i)] == '\'' && *quote_state == 2)
+		|| (str[(*i)] == '\"' && *quote_state == 1))
+	{
+		return (1);
+	}
+	return (0);
 }
 
-char *allocate_and_init(char *str, int *i, int *j, int *quote_state)
+char	*select_rm_hp(t_quote_params	*params, char *new_str, int j)
 {
-    char *new_str;
-    
-    (*i) = 0;
-    (*j) = 0;
-    (*quote_state) = 0;
-    
-    if (!str)
-        return (NULL);
-    new_str = malloc(strlen(str) + 1);
-    if (!new_str)
-        return (NULL);
-    return new_str;
+	return (free(params), new_str[j] = '\0', new_str);
 }
 
-char *selective_remove_quotes(char *str, int remove_mode)
+char	*selective_remove_quotes(char *str, int remove_mode)
 {
-    char *new_str;
-    int i;
-    int j;
-    int quote_state;
-    int in_opposite_quote;
-    
-   new_str = allocate_and_init(str, &i, &j, &quote_state);
-    if (!new_str)
-        return (NULL);
-    while (str[i])
-    {
-        in_opposite_quote = 0;
-        if ((str[i] == '\'' && quote_state == 2) || 
-            (str[i] == '\"' && quote_state == 1))
-        {
-            new_str[j++] = str[i++];
-            in_opposite_quote = 1;
-        }
-        else if (!in_opposite_quote && !process_quote_char(str[i], &quote_state, new_str, &j, remove_mode))
-            new_str[j++] = str[i++];
-        else
-            i++;
-    }
-    return (new_str[j] = '\0', new_str);
+	char			*new_str;
+	t_quote_params	*params;
+
+	new_str = allocate_and_init(str);
+	if (!new_str)
+		return (NULL);
+	params = add_quote_params(new_str, remove_mode);
+	if (!params)
+		return (free(new_str), NULL);
+	while (str[params->i])
+	{
+		params->in_opposite_quote = 0;
+		if (selective_hp(str, &params->i, &params->quote_state) == 1)
+		{
+			new_str[params->j++] = str[params->i++];
+			params->in_opposite_quote = 1;
+		}
+		else if (!params->in_opposite_quote
+			&& !process_quote_char(str[params->i], params))
+			params->new_str[(params->j)++] = str[params->i++];
+		else
+			params->i++;
+	}
+	return (select_rm_hp(params, new_str, params->j));
 }
 
-
-void process_quotes_for_cmd_hp(t_cmd *current, int *i, int remove_mode)
+void	processed_cmd(t_cmd *current, char	*processed)
 {
-    char *processed;
-    if (current->args)
-        {
-            (*i) = 0;
-            while (current->args[(*i)])
-            {
-                processed = selective_remove_quotes(current->args[(*i)], remove_mode);
-                if (processed)
-                {
-                    free(current->args[(*i)]);
-                    current->args[(*i)] = processed;
-                }
-                (*i)++;
-            }
-        }
-        if (current->cmd)
-        {
-            (*i) = 0;
-            processed = selective_remove_quotes(current->cmd, remove_mode);
-            if (processed)
-                {
-                    free(current->cmd);
-                    current->cmd = processed;
-                }
-        }
+	free(current->cmd);
+	current->cmd = processed;
 }
 
-
-void process_quotes_for_cmd(t_cmd *cmd_list, int remove_mode)
+void	processed_redir(t_redir *redir, char *processed)
 {
-    t_cmd *current;
-    char *processed;
-    int i;
-
-    current = cmd_list;
-    while (current)
-    {
-        process_quotes_for_cmd_hp(current, &i, remove_mode);
-        t_redir *redir = current->redirs;
-        while (redir)
-        {
-            if (redir->file)
-            {
-                processed = selective_remove_quotes(redir->file, remove_mode);
-                if (processed)
-                {
-                    free(redir->file);
-                    redir->file = processed;
-                }
-            }
-            redir = redir->next;
-        }
-        current = current->next;
-    }
+	free(redir->file);
+	redir->file = processed;
 }

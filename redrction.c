@@ -6,64 +6,89 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:59:21 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/06/01 16:22:21 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/06/20 17:11:02 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void ft_redircte(t_redir *rederction, t_env *env, t_cmd *cmd)
+char	*ft_strnstr(const char *big, const char *little, size_t len)
 {
-    t_redir *tmp;
+	size_t	i;
+	size_t	j;
 
-    tmp = rederction;
-
-    while(tmp)
-    {
-                    printf("fd_name = %s\n and amb= %d\n", tmp -> file, tmp->Ambiguous);
-        if(tmp->type == 0) 
-        {
-            dup2(tmp->fd, 0);
-            close(tmp->fd); 
-        }
-        else if (tmp->type == 1) 
-        {
-            // printf("-> %d \n", tmp->fd);
-            dup2(tmp->fd, 1);
-            close(tmp->fd);
-        }
-        else if(tmp->type == 2 )
-        {
-            dup2(tmp->fd, 1);
-            close (tmp->fd);
-        }
-        tmp = tmp->next;
-    }
+	i = 0;
+	if (*little == '\0')
+		return ((char *)big);
+	if (len == 0)
+		return (NULL);
+	while (big[i] != '\0' && i < len)
+	{
+		j = 0;
+		while (little[j] != '\0' && big[i + j] == little[j] && (i + j) < len)
+		{
+			j++;
+		}
+		if (little[j] == '\0')
+		{
+			return ((char *)&big[i]);
+		}
+		i++;
+	}
+	return (NULL);
 }
 
-void free_cmd(t_cmd *cmd)
+int	dup_herdoc(t_redir *red)
 {
-    t_redir *redir;
-    t_redir *next_redir;
-    
-    if (cmd->cmd)
-        free(cmd->cmd);
-    
-    if (cmd->args)
-    {
-        for (int i = 0; cmd->args[i]; i++)
-            free(cmd->args[i]);
-        free(cmd->args);
-    }
-    
-    redir = cmd->redirs;
-    while (redir)
-    {
-        next_redir = redir->next;
-        if (redir->file)
-            free(redir->file);
-        free(redir);
-        redir = next_redir;
-    }
-    free(cmd);
+	if (red->fd[1] > 0)
+	{
+		dup2(red->fd[1], 0);
+		close(red->fd[1]);
+	}
+	else
+		return (-1);
+	return (0);
+}
+
+int	dup_input(t_redir *tmp)
+{
+	if (tmp->fd[0] > 0)
+	{
+		dup2(tmp->fd[0], 0);
+		close(tmp->fd[0]);
+	}
+	else
+		return (-1);
+	return (0);
+}
+
+int	dup_output(t_redir *tmp)
+{
+	if (tmp->fd[0] > 0)
+	{
+		dup2(tmp->fd[0], 1);
+		close(tmp->fd[0]);
+	}
+	else
+		return (-1);
+	return (0);
+}
+
+int	ft_redircte(t_redir *redir)
+{
+	t_redir	*tmp;
+
+	tmp = redir;
+	while (tmp)
+	{
+		if (tmp->type == 3 && dup_herdoc(tmp) == -1)
+			return (-1);
+		else if (tmp->type == 0 && dup_input(tmp) == -1)
+			return (-1);
+		else if ((tmp->type == 1 || tmp->type == 2)
+			&& dup_output(tmp) == -1)
+			return (-1);
+		tmp = tmp->next;
+	}
+	return (0);
 }

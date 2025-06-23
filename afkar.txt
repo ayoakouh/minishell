@@ -1,6 +1,40 @@
 top katrana fe child + fach kadir ctrl + c katmchi le parent 
 
 
+0 kat9ra mno ;
+1 katkteb fih;
+
+
+-------msg
+
+
+
+
+
+
+
+
+minishell $> exit 44444444444 > a
+minishell $> exit 44444444444 > a
+
+
+
+
+ leaks envvv
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

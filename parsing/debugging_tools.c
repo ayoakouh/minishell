@@ -1,6 +1,6 @@
 #include "parsing.h"
 
-void	print_tokens(t_token *token_list)
+void	print_tokens(t_token *token_list)   /// must be delete
 {
 	t_token	*current;
 	int		i;
@@ -10,12 +10,12 @@ void	print_tokens(t_token *token_list)
 	while (current)
 	{
 		printf("Token %d: DATA=[%s], TYPE=[%s]\n",
-			i++, current->DATA, current->TOKIN);
+			i++, current->data, current->tokin);
 		current = current->next;
 	}
 }
 
-void	print_env(t_env *env_struct)
+void	print_env(t_env *env_struct)  /// must be delete
 {
 	t_env *tmp;
 
@@ -30,7 +30,7 @@ void	print_env(t_env *env_struct)
 }
 
 
-void print_cmd(t_cmd *cmd_list)
+void print_cmd(t_cmd *cmd_list)   /// must be delete
 {
     t_cmd *tmp;
     int i = 0;
@@ -44,7 +44,7 @@ void print_cmd(t_cmd *cmd_list)
         
         // Check if cmd is NULL before printing
         if (tmp->cmd)
-            printf("command name : %s\n", tmp->cmd);
+            printf("command name : [%s]\n", tmp->cmd);
         else
             printf("command name : (null)\n");
             
@@ -52,7 +52,7 @@ void print_cmd(t_cmd *cmd_list)
         if (tmp->args) {
             while (tmp->args[i])
             {
-                printf("command args : %s\n", tmp->args[i]);
+                printf("command args : [%s]\n", tmp->args[i]);
                 i++;
             }
         }
@@ -61,7 +61,7 @@ void print_cmd(t_cmd *cmd_list)
         if (tmp->args_befor_quotes_remover) {
             while (tmp->args_befor_quotes_remover[j])
             {
-                printf("args befor quotes remover : %s\n", tmp->args_befor_quotes_remover[j]);
+                printf("args befor quotes remover : [%s]\n", tmp->args_befor_quotes_remover[j]);
                 j++;
             }
         }
@@ -77,18 +77,20 @@ void print_cmd(t_cmd *cmd_list)
                 
                 // Check if orig_token is NULL before printing
                 if (tp->orig_token)
-                    printf("file name befor the expanend : %s\n", tp->orig_token);
+                    printf("file name befor the expanend : [%s]\n", tp->orig_token);
                 else
                     printf("file name befor the expanend : (null)\n");
                     
                 // Check if file is NULL before printing
                 if (tp->file)
-                    printf("file name : %s\n", tp->file);
+                    printf("file name : [%s]\n", tp->file);
                 else
                     printf("file name : (null)\n");
-                    
-                printf("fd for the file : %d\n", tp->fd);
-                printf("ambiguous %d\n", tp->Ambiguous);
+                if (tp)
+                {
+                    printf("fd for the file : %d\n", tp->fd[0]);
+                    printf("ambiguous %d\n", tp->ambiguous);
+                }
                 tp = tp->next;
             }
         }
@@ -98,31 +100,4 @@ void print_cmd(t_cmd *cmd_list)
     }   
 }
 
-void print_ambiguous_redir_errors(t_cmd *cmd)
-{
-    t_cmd *tmp;
-    t_redir *redir;
-    char *prefix = "minishell: ";
-    char *suffix = ": ambiguous redirect\n";
-    char *error_msg;
 
-    tmp = cmd;
-    while (tmp)
-    {
-        redir = tmp->redirs;
-        while (redir)
-        {
-            if (redir->Ambiguous)
-            {
-                write(2, prefix, ft_strlen(prefix));
-                if (redir->orig_token)
-                    write(2, redir->orig_token, ft_strlen(redir->orig_token));
-                else
-                    write(2, "$EMPTY", 6);
-                write(2, suffix, ft_strlen(suffix));
-            }
-            redir = redir->next;
-        }
-        tmp = tmp->next;
-    }
-}
