@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 11:21:05 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/19 11:28:56 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/27 22:20:47 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,6 @@ void	processed_cmd(t_cmd *current, char	*processed)
 void	processed_redir(t_redir *redir, char *processed)
 {
 	free(redir->file);
+	redir->file = NULL;
 	redir->file = processed;
 }

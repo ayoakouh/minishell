@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 15:09:10 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/06/23 17:28:38 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/06/26 21:25:11 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ void	process_export(char *str, char *key, char *value, t_env **lst)
 	{
 		set_env(lst, key, value);
 	}
-	if (check_append(str) == '=')
+	else if (check_append(str) == '=')
 	{
 		updat_env(lst, key, value);
 	}
-	if (check_append(str) == 0)
+	else if (check_append(str) == 0)
 	{
 		value_empty(lst, key);
 	}

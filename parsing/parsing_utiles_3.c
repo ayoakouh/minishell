@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:33:32 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/21 16:16:17 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/28 11:21:31 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ void	split_stoper_hp(t_cmd *tmp, int *i, int *exp)
 {
 	char	*new_str;
 
-	if ((*i) == 0 && tmp->args[(*i)] && strcmp(tmp->args[(*i)], "export") == 0)
+	if ((*i) == 0 && tmp->args[(*i)]
+		&& ft_strcmp(tmp->args[(*i)], "export") == 0)
 		*exp = 1;
 	if (tmp->args_befor_quotes_remover && tmp->args_befor_quotes_remover[(*i)])
 	{

@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:33:26 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/21 16:32:50 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/26 11:26:25 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,11 @@ char	*process_valid_assignment(char **split, char *new_key)
 {
 	char	*result;
 
-	if (split && split[1] && strchr(split[1], '$') != NULL
-		&& strchr(split[1], '\'') == NULL)
+	if (split && split[1] && ft_strchr(split[1], '$') != NULL
+		&& ft_strchr(split[1], '\'') == NULL)
+	{
 		result = create_quoted_value(split[1], split, new_key);
+	}
 	else
 		result = create_simple_assignment(split[0], split[1], split, new_key);
 	return (result);

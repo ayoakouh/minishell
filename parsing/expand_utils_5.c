@@ -6,27 +6,30 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 11:48:37 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/15 11:45:35 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/27 15:59:35 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 
-int	helper3(t_exp_helper *expand, int exit_status, int pipe_out)
+int	helper3(t_exp_helper *expand, int pipe_out, int last_node)
 {
 	static int	was_there_a_pipe_befor = 0;
 
 	if (pipe_out == 1)
-		was_there_a_pipe_befor++;
+		was_there_a_pipe_befor = 1;
 	if (expand->original[expand->i] == '?')
 	{
-		if (was_there_a_pipe_befor == 1)
+		if (was_there_a_pipe_befor == 0 && last_node == 1 && pipe_out == 0)
 		{
-			was_there_a_pipe_befor = 0;
 			expand->var_value = ft_itoa(0);
+			was_there_a_pipe_befor = 0;
 		}
 		else
+		{
 			expand->var_value = ft_itoa(get_or_set(GET, 0));
+			was_there_a_pipe_befor = 0;
+		}
 		expand->i++;
 		return (1);
 	}

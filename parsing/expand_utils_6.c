@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 11:51:19 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/19 11:45:13 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/26 16:58:36 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	ensure_buffer_space(t_exp_helper *expand, size_t additional_needed)
 		}
 		if (expand->expanded)
 		{
-			memcpy(new_buffer, expand->expanded, expand->j);
+			ft_memcpy(new_buffer, expand->expanded, expand->j);
 			free(expand->expanded);
 		}
 		expand->expanded = new_buffer;
@@ -114,7 +114,7 @@ char	*allocate_and_init(char *str)
 
 	if (!str)
 		return (NULL);
-	new_str = malloc(strlen(str) + 1);
+	new_str = malloc(ft_strlen(str) + 1);
 	if (!new_str)
 		return (NULL);
 	return (new_str);

@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/12 12:34:07 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/06/23 17:26:27 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/06/26 21:24:54 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,10 @@ void	set_value_env(t_env **env, char *key, char *value)
 	tmp = *env;
 	while (tmp)
 	{
-		if (strcmp(key, tmp->key) == 0)
+		if (ft_strcmp(key, tmp->key) == 0)
 		{
 			free(tmp->value);
 			tmp->value = ft_strdup(value);
-			free(value);
 			tmp->is_not_active = 0;
 			return ;
 		}
@@ -55,7 +54,7 @@ void	updat_env(t_env **env_list, char *key, char *value)
 	tmp = *env_list;
 	while (tmp)
 	{
-		if (strcmp(key, tmp->key) == 0)
+		if (ft_strcmp(key, tmp->key) == 0)
 		{
 			free(tmp->value);
 			tmp->value = ft_strdup(value);

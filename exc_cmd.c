@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 21:21:52 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/06/23 14:45:14 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/06/28 21:07:05 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,23 +31,23 @@ void	handle_absolute_path(t_cmd *cmd, char **help, int flag)
 	}
 }
 
-void	check_access(t_cmd *cmd, char *helper, char **split_path,
-	char **env_array)
+int	check_access(t_cmd *cmd, char *helper, char **env_array)
 {
-	if ((access(helper, X_OK) != -1))
+	struct stat	err;
+
+	if (access(helper, F_OK) == 0)
 	{
-		puts("000");
-		if (execve(helper, cmd->args, env_array) == -1)
+		if (!stat(cmd->args[0], &err))
 		{
-			if (errno == 20 || (errno == 2 && ft_strchr(cmd->args[0], '/')))
-			{
-				printf("....%d\n", errno);
-				ft_free_split(split_path);
-				ft_print_error(cmd, 0);
-			}
+			if (S_ISDIR(err.st_mode))
+				return (1);
 		}
+		if ((access(helper, X_OK) != -1))
+			execve(helper, cmd->args, env_array);
+		else
+			ft_print_error(cmd, 0);
 	}
-	ft_print_error(cmd, 0);
+	return (0);
 }
 
 void	ft_execute_path_command(t_cmd *cmd, char **env_array, char **split_path)
@@ -56,22 +56,20 @@ void	ft_execute_path_command(t_cmd *cmd, char **env_array, char **split_path)
 	char	*helper;
 	int		i;
 
-	i = 0;
-	if (access(cmd->args[0], X_OK) != -1 && ft_strchr(cmd->args[0], '/'))
-		ft_print_error(cmd, 0);
-	while (split_path[i])
+	i = -1;
+	while (split_path[++i])
 	{
 		tmp = ft_strjoin(split_path[i], "/");
 		helper = ft_strjoin(tmp, cmd->args[0]);
 		free(tmp);
 		if (!helper)
 		{
-			i++ ;
+			free(tmp);
 			continue ;
 		}
-		check_access(cmd, helper, split_path, env_array);
+		if (check_access(cmd, helper, env_array) == 1)
+			continue ;
 		free(helper);
-		i++;
 	}
 	ft_free_split(split_path);
 	write_error(cmd);
@@ -114,6 +112,7 @@ void	ft_excute_commands(t_cmd *cmd, t_env **env_list, int flag)
 	if (ft_strchr(cmd->args[0], '/'))
 	{
 		handle_absolute_path(cmd, env_doble, flag);
+		free_split_str(env_doble);
 		return ;
 	}
 	if (flag == 1)
@@ -122,14 +121,13 @@ void	ft_excute_commands(t_cmd *cmd, t_env **env_list, int flag)
 		if (child_pid == 0)
 			handle_child(cmd, *env_list, env_doble);
 		else if (child_pid > 0)
-		{
 			wait_for_children(cmd, child_pid);
-		}
 	}
 	else
 		handle_child(cmd, *env_list, env_doble);
 	free_split_str(env_doble);
 }
+
 //this for excute_path-command;;;;
 		// if (!(access(helper, X_OK) == -1))
 		// {

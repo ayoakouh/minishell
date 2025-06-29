@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 15:47:25 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/20 12:30:58 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/28 13:53:16 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,10 +87,7 @@ t_cmd	*creat_cmd_node(char *str, t_token *tp, int pipe_out)
 		return (NULL);
 	cmd_str = cmd_extracter(str);
 	if (!cmd_str)
-	{
-		free(tmp);
-		return (NULL);
-	}
+		return (free(tmp), NULL);
 	tmp->args = ft_split_q(cmd_str, ' ');
 	tmp->args_befor_quotes_remover = ft_split_q(cmd_str, ' ');
 	free(cmd_str);
@@ -116,9 +113,9 @@ t_cmd	*parser(t_token *token_list)
 	tmp = token_list;
 	while (tmp)
 	{
-		if (strcmp(tmp->tokin, "word_tokin") == 0)
+		if (ft_strcmp(tmp->tokin, "word_tokin") == 0)
 		{
-			if (tmp->next && strcmp(tmp->next->tokin, "pipe_token") == 0)
+			if (tmp->next && ft_strcmp(tmp->next->tokin, "pipe_token") == 0)
 				cmd_node = creat_cmd_node(tmp->data, tmp, 1);
 			else
 				cmd_node = creat_cmd_node(tmp->data, tmp, 0);

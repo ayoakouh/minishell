@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 15:08:46 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/20 21:35:12 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/27 15:58:07 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	process_redirection(t_cmd *cmd, t_redir *tp, int *failed)
 	}
 }
 
-void	file_opener(t_cmd *cmd, t_env *env)
+void	file_opener(t_cmd *cmd)
 {
 	t_cmd	*tmp;
 	t_redir	*tp;
@@ -71,4 +71,18 @@ void	file_opener(t_cmd *cmd, t_env *env)
 		}
 		tmp = tmp->next;
 	}
+}
+
+char	*ft_strcpy(char *dst, const char *src)
+{
+	size_t	i;
+
+	i = 0;
+	while (src[i] != '\0')
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = '\0';
+	return (dst);
 }

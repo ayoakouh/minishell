@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/21 14:38:22 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/21 16:42:38 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/27 15:58:22 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,9 @@ char	*handle_split_processing(char **split, char *str)
 		return (NULL);
 	}
 	new_key = plus_checker(new_key);
-	if ((((strchr(split[0], '\'') == NULL && strchr(split[0], '\"') == NULL)
-				&& strchr(split[0], '$') == NULL))
+	if ((((ft_strchr(split[0], '\'') == NULL
+					&& ft_strchr(split[0], '\"') == NULL)
+				&& ft_strchr(split[0], '$') == NULL))
 		&& is_valid_key(new_key) == 0)
 		result = process_valid_assignment(split, new_key);
 	else
@@ -43,9 +44,10 @@ char	*split_helper(char *str, char *befor, int exp)
 	char	**split;
 	char	*result;
 
+	(void)befor;
 	if (exp != 1)
 		return (NULL);
-	if (strchr(str, '=') == NULL)
+	if (ft_strchr(str, '=') == NULL)
 	{
 		result = ft_strdup(str);
 		return (result);
@@ -54,6 +56,12 @@ char	*split_helper(char *str, char *befor, int exp)
 	if (split == NULL)
 	{
 		result = ft_strdup(str);
+		return (result);
+	}
+	if (split[1][0] == '\"' && split[1][ft_strlen(split[1]) - 1] == '\"')
+	{
+		result = ft_strdup(str);
+		free_extract_result(split);
 		return (result);
 	}
 	result = handle_split_processing(split, str);
@@ -67,7 +75,7 @@ t_env	*find_shlvl_node(t_env *env)
 	tmp = env;
 	while (tmp)
 	{
-		if (tmp->key && strcmp(tmp->key, "SHLVL") == 0)
+		if (tmp->key && ft_strcmp(tmp->key, "SHLVL") == 0)
 			return (tmp);
 		tmp = tmp->next;
 	}
@@ -81,7 +89,7 @@ void	update_shlvl_value(t_env *shlvl_node)
 	shl_vl = 0;
 	if (shlvl_node->value && shlvl_node->value[0] != '\0')
 	{
-		shl_vl = atoi(shlvl_node->value);
+		shl_vl = ft_atoi(shlvl_node->value);
 		free(shlvl_node->value);
 		shlvl_node->value = NULL;
 	}
@@ -98,8 +106,8 @@ t_env	*create_shlvl_node(void)
 	new_node = malloc(sizeof(t_env));
 	if (!new_node)
 		return (NULL);
-	new_node->key = strdup("SHLVL");
-	new_node->value = strdup("1");
+	new_node->key = ft_strdup("SHLVL");
+	new_node->value = ft_strdup("1");
 	new_node->is_not_active = 0;
 	new_node->next = NULL;
 	if (!new_node->key || !new_node->value)

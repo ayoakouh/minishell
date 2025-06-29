@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 11:16:14 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/18 14:45:56 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/27 13:55:39 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ int	rebuild_cmd_args(char **new_args, t_cmd *current, char **split,
 
 	j = 1;
 	arg_count = ft_lint(current->args);
-	new_args[two_numbers->number_1] = strdup(split[0]);
+	new_args[two_numbers->number_1] = ft_strdup(split[0]);
 	while (j < two_numbers->number_2)
 	{
-		new_args[two_numbers->number_1 + j] = strdup(split[j]);
+		new_args[two_numbers->number_1 + j] = ft_strdup(split[j]);
 		j++;
 	}
 	j = two_numbers->number_1 + 1;
@@ -54,7 +54,7 @@ void	split_the_rest_helper(t_cmd *current, int *i)
 		if (new_args)
 		{
 			prepare_new_args(new_args, current, (*i));
-			two_numbers = add_two_int((*i), word_count);
+			two_numbers = add_two_int((*i), word_count, 1);
 			(*i) = rebuild_cmd_args(new_args, current, split, two_numbers);
 			free(two_numbers);
 		}
@@ -69,12 +69,12 @@ int	split_the_rest_hp(t_cmd *current, int *i)
 
 	if (!current->args)
 		return (0);
-	if (!current->cmd || strcmp(current->cmd, "export") != 0)
+	if (!current->cmd || ft_strcmp(current->cmd, "export") != 0)
 	{
 		(*i) = 0;
 		while (current->args && current->args[(*i)])
 		{
-			equals = strchr(current->args[(*i)], '=');
+			equals = ft_strchr(current->args[(*i)], '=');
 			split_the_rest_helper(current, i);
 			(*i)++;
 		}

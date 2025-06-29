@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 17:44:26 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/19 11:41:23 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/27 15:59:41 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_pre_cmd	*init_precmd(char *input, int *i, char *result, int *j)
 	return (pre_cmd);
 }
 
-t_add_int	*add_two_int(int number_1, int number_2)
+t_add_int	*add_two_int(int number_1, int number_2, int last_node)
 {
 	t_add_int	*two_number;
 
@@ -35,6 +35,7 @@ t_add_int	*add_two_int(int number_1, int number_2)
 		return (NULL);
 	two_number->number_1 = number_1;
 	two_number->number_2 = number_2;
+	two_number->number_3 = last_node;
 	return (two_number);
 }
 

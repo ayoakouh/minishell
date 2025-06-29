@@ -1,22 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   heredoc_helper_3.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/26 12:06:41 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/05/26 14:16:10 by ayoakouh         ###   ########.fr       */
+/*   Created: 2025/06/28 20:26:22 by anel-men          #+#    #+#             */
+/*   Updated: 2025/06/28 20:26:25 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "minishell.h"
-// #include <signal.h>
+#include "minishell.h"
 
-// void handel_signal(int sig)
-// {
-//     ft_putstr_fd("\n", 1);
-//     rl_on_new_line();
-//     rl_replace_line("", 0);
-//     rl_redisplay();  
-// }
+void	free_dir(int j, int dir_size, char **dir)
+{
+	while (j < dir_size)
+	{
+		if (dir[j] != NULL)
+			free(dir[j]);
+		j++;
+	}
+}

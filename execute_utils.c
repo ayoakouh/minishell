@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 14:17:31 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/06/23 14:44:49 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/06/26 18:50:02 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,9 @@ void	fork_to_child(t_cmd *cmd, char **help)
 
 void	write_error(t_cmd *cmd)
 {
-	write(2, "11minishell: ", 13);
+	write(2, "minishell: ", 12);
 	write(2, cmd->args[0], ft_strlen(cmd->args[0]));
-	write(2, ": command not found\n", 20);
+	write(2, ": command not found\n", 21);
 	cmd->data.exit_status = get_or_set(SET, 127);
 	exit(127);
 }

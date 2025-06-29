@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:16:17 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/16 15:18:42 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/26 16:54:30 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ char	**split_if_needed(char *str)
 	trimmed_str = ft_strtrim(str, " ");
 	if (!trimmed_str)
 		return (NULL);
-	if (!strchr(trimmed_str, ' ') && !strchr(trimmed_str, '\t')
-		&& !strchr(trimmed_str, '\n'))
+	if (!ft_strchr(trimmed_str, ' ') && !ft_strchr(trimmed_str, '\t')
+		&& !ft_strchr(trimmed_str, '\n'))
 		return (free(trimmed_str), NULL);
 	result = ft_split_q(trimmed_str, ' ');
 	free(trimmed_str);

@@ -6,25 +6,39 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 15:08:09 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/21 15:42:59 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/27 16:30:33 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
 
-int	expand_handle_helper1(t_exp_helper *expand, int exit_status,
-			t_env *env, int pipe_out)
+int	exp_hp(t_exp_helper *expand)
+{
+	if (expand && expand->original && expand->i > 0
+		&& expand->original[expand->i] != '\0'
+		&& expand->original[expand->i + 1] != '\0'
+		&& expand->original[expand->i - 1] == '\"'
+		&& expand->original[expand->i] == '$'
+		&& expand->original[expand->i + 1] == '\"')
+		return (0);
+	return (1);
+}
+
+int	expand_handle_helper1(t_exp_helper *expand,
+			t_env *env, int pipe_out, int last_node)
 {
 	char	*var;
 	int		extracting;
 	int		res_adding_var;
 
 	var = NULL;
+	if (exp_hp(expand) == 0)
+		return (0);
 	if (expand->original[expand->i] == '$' && expand->quote_state != 1)
 	{
 		expand->i++;
-		extracting = extracting_the_key_value(expand, exit_status,
-				env, pipe_out);
+		extracting = extracting_the_key_value(expand,
+				env, pipe_out, last_node);
 		if (extracting == 0)
 			return (0);
 		if (expand->var_value)
@@ -40,13 +54,13 @@ int	expand_handle_helper1(t_exp_helper *expand, int exit_status,
 	return (0);
 }
 
-static int	process_string_loop(t_exp_helper *expand, t_env *env,
+int	process_string_loop(t_exp_helper *expand, t_env *env,
 		t_add_int *two_number)
 {
 	while (expand->original[expand->i])
 	{
 		if (!expand_handle_helper0(expand) && !expand_handle_helper1(expand,
-				two_number->number_1, env, two_number->number_2))
+				env, two_number->number_2, two_number->number_3))
 		{
 			if (!ensure_buffer_space(expand, 1))
 			{
@@ -60,73 +74,27 @@ static int	process_string_loop(t_exp_helper *expand, t_env *env,
 	return (1);
 }
 
-void	process_string(char *str, t_exp_helper *expand, t_env *env,
-		t_add_int *two_number)
+char	*handle_quotes_and_spaces(const char *str)
 {
-	char	*new_expanded;
+	char	*result;
+	int		len;
 
-	if (!expand_fill_str(expand, str))
-	{
-		free(expand->expanded);
-		expand->expanded = NULL;
-		free(two_number);
-		return ;
-	}
-	if (!process_string_loop(expand, env, two_number))
-	{
-		free(two_number);
-		return ;
-	}
-	if (expand->expanded)
-		expand->expanded[expand->j] = '\0';
-	new_expanded = ft_strtrim(change_space((expand->expanded)), " ");
-	free(expand->expanded);
-	expand->expanded = new_expanded;
+	result = create_result_string(str);
+	if (!result)
+		return (NULL);
+	len = ft_strlen(result);
+	handle_opening_spaces(result, &len);
+	handle_closing_spaces(result, &len);
+	return (result);
 }
 
-t_exp_helper	*alloc_expand(void)
+void	process_helper(char *new_expanded, char	*final_result,
+			char	*original_expanded, t_exp_helper *expand)
 {
-	t_exp_helper	*expand;
-
-	expand = malloc(sizeof(t_exp_helper));
-	if (!expand)
-	{
-		fprintf(stderr, "minishell: memory allocation failed\n");
-		exit(1);
-	}
-	expand->buffer_size = 0;
-	expand->expanded = NULL;
-	expand->var_name = NULL;
-	expand->var_value = NULL;
-	expand->had_removed_var = 0;
-	return (expand);
-}
-
-char	*change_space(char *str)
-{
-	int	i;
-	int	quote_state;
-
-	i = 0;
-	quote_state = 0;
-	while (str && str[i])
-	{
-		if (str[i] == '\'')
-		{
-			if (quote_state == 0)
-				quote_state = 1;
-			else if (quote_state == 1)
-				quote_state = 0;
-		}
-		else if (str[i] == '"')
-		{
-			if (quote_state == 0)
-				quote_state = 2;
-			else if (quote_state == 2)
-				quote_state = 0;
-		}
-		change_space_helper(str, &quote_state, &i);
-		i++;
-	}
-	return (str);
+	change_space(new_expanded);
+	final_result = handle_quotes_and_spaces(new_expanded);
+	free(original_expanded);
+	free(new_expanded);
+	expand->expanded = final_result;
+	printf("________{%s}______\n", expand->expanded);
 }

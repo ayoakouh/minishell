@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 17:59:21 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/06/20 17:11:02 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/06/26 16:21:47 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int	dup_herdoc(t_redir *red)
 	{
 		dup2(red->fd[1], 0);
 		close(red->fd[1]);
+		red->fd[1] = -1;
 	}
 	else
 		return (-1);
@@ -56,6 +57,7 @@ int	dup_input(t_redir *tmp)
 	{
 		dup2(tmp->fd[0], 0);
 		close(tmp->fd[0]);
+		tmp->fd[0] = -1;
 	}
 	else
 		return (-1);
@@ -68,6 +70,7 @@ int	dup_output(t_redir *tmp)
 	{
 		dup2(tmp->fd[0], 1);
 		close(tmp->fd[0]);
+		tmp->fd[0] = -1;
 	}
 	else
 		return (-1);

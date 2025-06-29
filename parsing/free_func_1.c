@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:55:39 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/16 15:23:33 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/28 13:54:28 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,10 @@ void	free_split_str(char **split_str)
 	if (!split_str)
 		return ;
 	while (split_str[j])
-		free(split_str[j++]);
+	{
+		free(split_str[j]);
+		j++;
+	}
 	free(split_str);
 }
 

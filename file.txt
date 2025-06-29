@@ -22,27 +22,6 @@ heredoc
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-env | grep hola;;
-
-export -HOLA;;
-
-for export and env ;;;
-
- unset PATHc
- ls
-
- page 13;;;
  
 
 
@@ -99,16 +78,6 @@ ls > t > t | < t cat | < Makefile
 
 
 
-
-
-minishell $> export HOME=
-minishell $> cd
-minishell: cd:  : No such file or directory
-minishell $> $?
-minishell: 1: command not found
-
-
-
 (n == LONG_MIN && ft_strcmp(args[1], "-9223372036854775808"))
 
 
@@ -134,12 +103,6 @@ if getcwd -------->>>>> exit print error;;;
 
 
 
-minishell $> ""
-minishell: : Permission denied
-minishell $> $?
-minishell: 126: command not found
-
-
 
 minishell $> export PATH+=:.
 minishell $> parsing
@@ -157,3 +120,65 @@ minishell $> cd 1/2/3
 minishell $> rm -rf ../../../1
 minishell $> /mnt/homes/ayoakouh/Desktop/ccccccc/minishell
 // he don't enter to minishell
+
+
+
+
+
+
+ 
+
+
+
+export a="     "
+export b="      "
+
+""ls""$a'-l'$b""
+
+
+minishell $> << t << k | << t << k
+> 
+> 
+> t
+> k
+=================================================================
+
+
+minishell $> << i << o << p | cat cat cat cat
+> i
+> o
+> p
+cat: cat: No such file or directory
+cat: cat: No such file or directory
+cat: cat: No such file or directory
+====================================
+
+<< t export
+minishell $> lsk
+minishell: lsk: command not found
+minishell $> $? | $?
+minishell: 0: command not found
+minishell: 0: command not found
+
+
+
+
+
+if fork failed and i did < p cat > p | < l ls > o the rediretions stays open
+
+
+
+
+=======================================
+
+
+
+
+
+
+
+minishell $> cd ccccccc
+minishell $> cd ...
+minishell $> pwd
+/mnt/homes/ayoakouh/Desktop
+minishell $> cd ccccccc

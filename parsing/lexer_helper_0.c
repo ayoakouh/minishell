@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:04:29 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/15 16:54:41 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/28 13:53:44 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	ft_strlen(const char *str)
 	i = 0;
 	if (str == NULL)
 		return (0);
-	while (str[i])
+	while (*str && str[i])
 		i++;
 	return (i);
 }

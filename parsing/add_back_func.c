@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 16:15:59 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/20 19:13:26 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/27 15:59:11 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,9 +92,9 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	i = 0;
 	if (s == NULL)
 		return (NULL);
-	l = strlen(s);
+	l = ft_strlen(s);
 	if (start >= l)
-		return (strdup(""));
+		return (ft_strdup(""));
 	if (len > l - start)
 		len = l - start;
 	ptr = (char *)malloc(sizeof(char) * len + 1);

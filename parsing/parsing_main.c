@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 16:06:35 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/18 17:46:31 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/26 14:51:54 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int	preprocess_cmd_hp_0(t_pre_cmd *pre_cmd, int *in_quotes)
 
 void	preprocess_cmd_hp_1(t_pre_cmd *pre_cmd, int *in_quotes)
 {
+	(void)in_quotes;
 	if (pre_cmd->input[(*pre_cmd->i)] == '>'
 		|| pre_cmd->input[(*pre_cmd->i)] == '<')
 	{
@@ -79,7 +80,7 @@ char	*preprocess_command(char *input)
 	in_quotes = 0;
 	if (!input)
 		return (NULL);
-	result = malloc(strlen(input) * 3 + 1);
+	result = malloc(ft_strlen(input) * 3 + 1);
 	if (!result)
 		return (NULL);
 	pre_cmd = init_precmd(input, &i, result, &j);

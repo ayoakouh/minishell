@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 16:46:36 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/21 16:05:07 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/28 16:25:42 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ typedef struct s_add_int
 {
 	int		number_1;
 	int		number_2;
+	int		number_3;
 }	t_add_int;
 
 typedef struct t_data
@@ -107,9 +108,9 @@ typedef struct s_redir
 	int				type;
 	char			*file;
 	int				*fd;
-	int				ambiguous; // change to ambiguous
+	int				ambiguous;
 	char			*orig_token;
-	char			*heredoc_delemter;
+	// char			*heredoc_delemter;
 	struct s_redir	*next;
 }	t_redir;
 
@@ -176,7 +177,7 @@ void			process_quotes_for_cmd_hp(t_cmd *current,
 					int *i, int remove_mode);
 void			ft_putstr_fd(char *s, int fd);
 void			print_file_error(char *file, int i);
-void			file_opener(t_cmd *cmd, t_env *env);
+void			file_opener(t_cmd *cmd);
 void			ft_lstadd_back_env(t_env **lst, t_env *new);
 void			ft_lstadd_back_token(t_token **lst, t_token *new);
 void			add_redir_back(t_redir **lst, t_redir *new);
@@ -205,6 +206,7 @@ void			prepare_new_args(char **new_args, t_cmd *current, int i);
 
 char			*ft_itoa(int n);
 char			*ft_strdup(const char *s);
+char			*ft_strcpy(char *dst, const char *src);
 char			*ft_strncpy(char *dest, const char *src, unsigned int n);
 char			*ft_strjoin(char const *s1, char const *s2);
 char			*redir_extracter(char *str);
@@ -237,18 +239,18 @@ int				signal_static(int type, int status);
 int				here_doc_static(int type, int status);
 int				has_quotes_in_previous_args(t_cmd *current, int current_index);
 int				ft_lint(char **str);
-int				helper3(t_exp_helper *expand, int exit_status, int pipe_out);
+int				helper3(t_exp_helper *expand, int pipe_out, int last_node);
 int				process_quote_char(char c, t_quote_params	*qoute_param);
 int				expand_handle_helper0(t_exp_helper *expand);
 int				ensure_buffer_space(t_exp_helper *expand,
 					size_t additional_needed);
 int				expand_fill_str(t_exp_helper *expand, char *str);
 int				ft_isdigiti(int c);
-int				expand_handle_helper1(t_exp_helper *expand, int exit_status,
-					t_env *env, int pipe_out);
+int				expand_handle_helper1(t_exp_helper *expand,
+					t_env *env, int pipe_out, int last_node);
 int				get_num_length(long num);
-int				extracting_the_key_value(t_exp_helper *expand, int exit_status,
-					t_env *env, int pipe_out);
+int				extracting_the_key_value(t_exp_helper *expand,
+					t_env *env, int pipe_out, int last_node);
 int				var_name_extract(t_exp_helper *expand);
 int				alloc_var_name(t_exp_helper *expand);
 int				preprocess_cmd_hp_0(t_pre_cmd *pre_cmd, int *in_quotes);
@@ -306,14 +308,13 @@ t_redir			*creat_redir_node(int type, char *file);
 t_cmd			*creat_cmd_node(char *str, t_token *tp, int pipe_out);
 t_cmd			*parser(t_token *token_list);
 t_exp_helper	*alloc_expand(void);
-t_add_int		*add_two_int(int exit_status, int pipe_out);
 void			ft_putchar_fd(char c, int fd);
 char			*split_helper(char *str, char *befor, int exp);
 void			process_redir_hp(char *str, int *start,
 					int *i, int *after_operator);
 void			processed_redir(t_redir *redir, char *processed);
 t_pre_cmd		*init_precmd(char *input, int *i, char *result, int *j);
-t_add_int		*add_two_int(int number_1, int number_2);
+t_add_int		*add_two_int(int number_1, int number_2, int last_node);
 t_quote_params	*add_quote_params(char *new_str, int remove_mode);
 t_split_helper	*split_param(size_t *i, size_t *j, size_t *start);
 t_extra_param	*init_extra_param(char *result,
@@ -342,5 +343,33 @@ t_env			*find_shlvl_node(t_env *env);
 void			update_shlvl_value(t_env *shlvl_node);
 t_env			*create_shlvl_node(void);
 void			change_space_helper(char *str, int	*quote_state, int *i);
-
+int				is_quote(char c);
+int				find_quote_end(const char *str, int len);
+int				find_quote_start(const char *str, int len);
+int				count_spaces_after(const char *str, int start, int len);
+int				count_spaces_before(const char *str, int end);
+void			shift_left(char *str, int from, int to_remove, int *len);
+void			shift_closing_left(char *str, int quote_start,
+					int spaces, int *len);
+void			handle_opening_spaces(char *result, int *len);
+void			handle_closing_spaces(char *result, int *len);
+char			*create_result_string(const char *str);
+char			*ft_strchr(char *s, int c);
+int				ft_strcmp(char *s1, char *s2);
+void			*ft_memcpy(void *dest, const void *src, size_t n);
+long			ft_atoi(const char *str);
+int				ft_space(const char **str, int sign);
+void			process_string(char *str, t_exp_helper *expand,
+					t_env *env, t_add_int *two_number);
+t_env			*find_last_node(t_env *env);
+int				process_string_initial(char *str, t_exp_helper *expand,
+					t_env *env, t_add_int *two_number);
+void			process_string_finalize(t_exp_helper *expand);
+int				process_string_loop(t_exp_helper *expand, t_env *env,
+					t_add_int *two_number);
+char			*handle_quotes_and_spaces(const char *str);
+void			*ft_memcpy(void *dest, const void *src, size_t n);
+void			*ft_memmove(void *dest, const void *src, size_t n);
+int				count_nodes(t_cmd *cmd);
+int				check_node(t_cmd *cmd, int i);
 #endif

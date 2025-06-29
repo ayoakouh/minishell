@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 10:15:39 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/16 15:36:48 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/27 15:59:14 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,17 @@ void	ambiguous_finder(t_cmd *cmd)
 		ambiguous_checker(tmp->redirs);
 		tmp = tmp->next;
 	}
+}
+
+int	ft_space(const char **str, int sign)
+{
+	while ((**str >= 9 && **str <= 13) || **str == 32)
+		(*str)++;
+	if (**str == '-' || **str == '+')
+	{
+		if (**str == '-')
+			sign *= -1;
+		(*str)++;
+	}
+	return (sign);
 }

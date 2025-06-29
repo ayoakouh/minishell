@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 14:20:59 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/19 17:05:11 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/28 15:08:41 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	handle_empty_var(t_cmd *current, t_exp_helper *expand, int *i, int *j)
 {
 	if ((expand->expanded && expand->expanded[0] == '\0'
-			&& strchr(current->args[(*i)], '$')))
+			&& ft_strchr(current->args[(*i)], '$')))
 	{
 		free(current->args[(*i)]);
 		free(expand->expanded);
@@ -52,11 +52,13 @@ void	expand_handle_redir(t_redir *redir, t_exp_helper *expand,
 		{
 			if (redir->type != 3)
 			{
-				nbr = add_two_int(two_number->number_1, two_number->number_2);
+				nbr = add_two_int(two_number->number_1,
+						two_number->number_2, 0);
 				if (!nbr)
 					return ;
 				process_string(redir->file, expand, env, nbr);
 				free(redir->file);
+				free(nbr);
 				redir->file = expand->expanded;
 				expand->expanded = NULL;
 			}
@@ -86,9 +88,10 @@ void	expand_handle(t_cmd *cmd_list, t_env *env, int exit_status)
 
 	expand = alloc_expand();
 	current = cmd_list;
-	number = add_two_int(exit_status, cmd_list->pipe_out);
 	while (current)
 	{
+		number = add_two_int(exit_status,
+				current->pipe_out, check_node(current, count_nodes(cmd_list)));
 		i = 0;
 		while (current->args && current->args[i])
 		{
@@ -97,8 +100,8 @@ void	expand_handle(t_cmd *cmd_list, t_env *env, int exit_status)
 		}
 		update_cmd(current);
 		expand_handle_redir(current->redirs, expand, env, number);
+		free(number);
 		current = current->next;
 	}
 	apply_word_splitting(cmd_list, expand);
-	free(number);
 }

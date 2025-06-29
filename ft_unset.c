@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 14:33:17 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/06/23 14:35:50 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/06/28 14:22:52 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*get_path(char *str, t_env **list)
 		if (!path)
 			return (NULL);
 	}
-	else if (!path)
+	else if (!path && str != NULL)
 	{
 		path = str;
 	}

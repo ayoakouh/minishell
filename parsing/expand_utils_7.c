@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 10:55:05 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/16 15:18:27 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/27 13:38:25 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,10 @@ int	alloc_var_name(t_exp_helper *expand)
 	expand->var_name = malloc(var_len + 1);
 	if (!expand->var_name)
 	{
-		fprintf(stderr, "minishell: memory allocation failed\n");
+		write(2, "minishell: memory allocation failed\n", 37);
 		exit(1);
 	}
-	memcpy(expand->var_name, expand->original + expand->start, var_len);
+	ft_memcpy(expand->var_name, expand->original + expand->start, var_len);
 	expand->var_name[var_len] = '\0';
 	return (2);
 }
@@ -96,7 +96,7 @@ int	adding_var_value(t_exp_helper *expand)
 {
 	size_t	len;
 
-	len = strlen(expand->var_value);
+	len = ft_strlen(expand->var_value);
 	if (len > SIZE_MAX - expand->j)
 	{
 		write(2, "minishell: memory allocation failed: buffer overflow\n", 54);
@@ -110,20 +110,20 @@ int	adding_var_value(t_exp_helper *expand)
 		expand->var_value = NULL;
 		return (0);
 	}
-	memcpy(expand->expanded + expand->j, expand->var_value, len);
+	ft_memcpy(expand->expanded + expand->j, expand->var_value, len);
 	expand->j += len;
 	free(expand->var_value);
 	expand->var_value = NULL;
 	return (1);
 }
 
-int	extracting_the_key_value(t_exp_helper *expand, int exit_status,
-	t_env *env, int pipe_out)
+int	extracting_the_key_value(t_exp_helper *expand,
+	t_env *env, int pipe_out, int last_node)
 {
 	int	extract_result;
 	int	alloc_result;
 
-	if (helper3(expand, exit_status, pipe_out) == 0)
+	if (helper3(expand, pipe_out, last_node) == 0)
 	{
 		expand->start = expand->i;
 		extract_result = var_name_extract(expand);

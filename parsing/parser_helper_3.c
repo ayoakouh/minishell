@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 19:41:27 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/19 11:39:14 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/28 13:50:19 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ char	*init_cmd_buffer(char *str, int *i, int *result_len, int *quote_state)
 	*result_len = 0;
 	if (!str)
 		return (NULL);
-	result = (char *)malloc(strlen(str) + 1);
+	result = (char *)malloc(ft_strlen(str) + 1);
 	if (!result)
 		return (NULL);
 	result[0] = '\0';

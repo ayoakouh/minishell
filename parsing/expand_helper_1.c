@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_helper_1.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/15 11:34:42 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/19 11:30:46 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/26 18:46:25 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*lookup_variable(char *var_name, t_env *env_struct)
 	tmp = env_struct;
 	while (tmp)
 	{
-		if (strcmp(var_name, tmp->key) == 0)
+		if (ft_strcmp(var_name, tmp->key) == 0)
 		{
 			if (tmp->value)
 				return (ft_strdup(tmp->value));
@@ -64,8 +64,8 @@ void	process_quotes_for_cmd_hp(t_cmd *current, int *i, int remove_mode)
 		*i = 0;
 		while (current->args[*i])
 		{
-			processed = selective_remove_quotes(
-					current->args[*i], remove_mode);
+			processed = (selective_remove_quotes(
+						current->args[*i], remove_mode));
 			if (processed)
 			{
 				free(current->args[*i]);
@@ -81,4 +81,22 @@ void	process_quotes_for_cmd_hp(t_cmd *current, int *i, int remove_mode)
 		if (processed)
 			processed_cmd(current, processed);
 	}
+}
+
+char	*ft_strchr(char *s, int c)
+{
+	int		i;
+	char	m;
+
+	i = 0;
+	m = c;
+	while (s[i] != '\0')
+	{
+		if (s[i] == m)
+			return ((char *)&s[i]);
+		i++;
+	}
+	if (m == '\0')
+		return ((char *)&s[i]);
+	return (NULL);
 }

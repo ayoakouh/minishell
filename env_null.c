@@ -6,7 +6,7 @@
 /*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 15:58:55 by ayoakouh          #+#    #+#             */
-/*   Updated: 2025/06/21 17:41:11 by ayoakouh         ###   ########.fr       */
+/*   Updated: 2025/06/27 14:47:28 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ int	is_invalid_key(char *str, char *key, int *status)
 	{
 		printf("minishell: export: %s : not valid identifier\n", str);
 		*status = 1;
-		free(key);
 		return (1);
 	}
 	return (0);
@@ -88,42 +87,3 @@ void	value_empty(t_env **env_list, char *key)
 	new_node->next = NULL;
 	ft_lstadd_back(env_list, new_node);
 }
-	// tmp = *env_list;
-	// while(tmp)
-	// {
-	// 	if (strcmp(key, tmp->key) == 0)
-	// 	{
-	// 		free(tmp->value);
-	// 		tmp->value = strdup(value);
-	// 		tmp->is_not_active = 1;
-	// 		return;
-	// 	}
-	// 	tmp = tmp->next;
-	// }
-
-// void value_empty(t_env **env_list, char *key, char *value)
-// {
-// 	// t_env *tmp;
-// 	t_env *new_node;
-
-// 	// tmp = *env_list;
-// 	// while(tmp)
-// 	// {
-// 	// 	if (strcmp(key, tmp->key) == 0)
-// 	// 	{
-// 	// 		free(tmp->value);
-// 	// 		tmp->value = strdup(value);
-// 	// 		tmp->is_not_active = 1;
-// 	// 		return;
-// 	// 	}
-// 	// 	tmp = tmp->next;
-// 	// }
-// 	new_node = malloc(sizeof(t_env));
-// 	if(!new_node)
-// 		return;
-// 	new_node->key = strdup(key);
-// 	new_node->value = strdup(value);
-// 	new_node->is_not_active = 1;
-// 	new_node->next = NULL;
-// 	ft_lstadd_back(env_list, new_node);
-// }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntx_check_helper_0.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ayoakouh <ayoakouh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 11:26:07 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/16 19:51:40 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/06/26 18:46:25 by ayoakouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	check_for_redirection(char *str)
 	i = 0;
 	len = 0;
 	count = 0;
-	if (str != NULL && strcmp(str, "|") != 0)
+	if (str != NULL && ft_strcmp(str, "|") != 0)
 	{
 		len = ft_strlen(str);
 		while (i <= len && str[i])

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/15 15:25:27 by anel-men          #+#    #+#             */
-/*   Updated: 2025/06/16 20:09:44 by anel-men         ###   ########.fr       */
+/*   Created: 2025/06/27 14:34:08 by anel-men          #+#    #+#             */
+/*   Updated: 2025/06/28 13:49:23 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,29 +21,28 @@ t_redir	*creat_redir_list_helper0(char *str1, char *str2)
 	str = ft_strdup(str2);
 	if (!str)
 		return (NULL);
-	if (strcmp(str1, ">>") == 0)
+	if (ft_strcmp(str1, ">>") == 0)
 		return (creat_redir_node(2, str));
-	else if (strcmp(str1, "<<") == 0)
+	else if (ft_strcmp(str1, "<<") == 0)
 		return (creat_redir_node(3, str));
-	else if (strcmp(str1, ">") == 0)
+	else if (ft_strcmp(str1, ">") == 0)
 		return (creat_redir_node(1, str));
-	else if (strcmp(str1, "<") == 0)
+	else if (ft_strcmp(str1, "<") == 0)
 		return (creat_redir_node(0, str));
-	free(str);
-	return (NULL);
+	return (free(str), NULL);
 }
 
 t_redir	*handle_empty_redirection(char *token)
 {
 	t_redir	*tmp_node;
 
-	if (strcmp(token, ">") == 0)
+	if (ft_strcmp(token, ">") == 0)
 		tmp_node = creat_redir_node(1, ft_strdup(""));
-	else if (strcmp(token, ">>") == 0)
+	else if (ft_strcmp(token, ">>") == 0)
 		tmp_node = creat_redir_node(2, ft_strdup(""));
-	else if (strcmp(token, "<") == 0)
+	else if (ft_strcmp(token, "<") == 0)
 		tmp_node = creat_redir_node(0, ft_strdup(""));
-	else if (strcmp(token, "<<") == 0)
+	else if (ft_strcmp(token, "<<") == 0)
 		tmp_node = creat_redir_node(3, ft_strdup(""));
 	else
 		tmp_node = NULL;
@@ -54,9 +53,9 @@ int	process_single_token(char **split_str, int i, t_redir **tmp_list)
 {
 	t_redir	*tmp_node;
 
-	if ((strcmp(split_str[i], ">") == 0 || strcmp(split_str[i], ">>") == 0
-			|| strcmp(split_str[i], "<") == 0
-			|| strcmp(split_str[i], "<<") == 0)
+	if ((ft_strcmp(split_str[i], ">") == 0 || ft_strcmp(split_str[i], ">>") == 0
+			|| ft_strcmp(split_str[i], "<") == 0
+			|| ft_strcmp(split_str[i], "<<") == 0)
 		&& (!split_str[i + 1] || split_str[i + 1][0] == '\0'))
 	{
 		tmp_node = handle_empty_redirection(split_str[i]);
@@ -99,7 +98,7 @@ t_redir	*creat_redir_list(char *str)
 	redir = redir_extracter(str);
 	split_str = ft_split_q(redir, ' ');
 	if (!split_str)
-		return (NULL);
+		return (free(redir), NULL);
 	free(redir);
 	result = process_redirection_tokens(split_str);
 	free_split_str(split_str);
